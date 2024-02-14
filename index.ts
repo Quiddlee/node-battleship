@@ -1,58 +1,36 @@
 /* eslint-disable no-console */
 import 'dotenv/config';
 
-import { WebSocketServer } from 'ws';
-
 import db from './src/data/db';
 import { httpServer } from './src/http_server';
+import { WSS } from './src/lib/utils/wss';
 import { MsgType } from './src/types/enums';
-import { RegClientData, RegMsg, RegServerData } from './src/types/types';
+import { RegMsg, RegServerData } from './src/types/types';
 
-const HTTP_PORT = process.env.PORT;
+const HTTP_PORT = Number(process.env.HTTP_PORT);
+const WSS_PORT = Number(process.env.WSS_PORT);
 
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 
-const wss = new WebSocketServer({ port: 3000 });
-console.log('Websocket parameters: ', wss.options);
+const wss = new WSS(WSS_PORT);
 
-wss.on('error', console.error);
-process.on('exit', () => {
-  wss.close();
-});
+wss.msg(MsgType.REG, ({ data, ws }) => {
+  console.log('message from client', data);
+  const { name, password } = data;
+  const [user, index] = db.createUser(name, password);
 
-wss.on('connection', (ws) => {
-  console.log('A user connected');
+  const resData: RegServerData = {
+    name: user.login,
+    index,
+    error: false,
+    errorText: '',
+  };
+  const res: RegMsg = {
+    type: MsgType.REG,
+    data: JSON.stringify(resData),
+    id: 0,
+  };
 
-  ws.on('message', (data) => {
-    console.log(data.toString());
-    const message: RegMsg = JSON.parse(data.toString());
-    const { name, password }: RegClientData = JSON.parse(message.data);
-    console.log('message from client', message);
-
-    const [user, index] = db.createUser(name, password);
-    console.log(user);
-
-    const resData: RegServerData = {
-      name: user.login,
-      index,
-      error: false,
-      errorText: '',
-    };
-    const res: RegMsg = {
-      type: MsgType.REG,
-      data: JSON.stringify(resData),
-      id: 0,
-    };
-
-    ws.send(JSON.stringify(res));
-  });
-
-  /*
-  wss.clients.forEach((client) => {
-    if (client !== ws && client.readyState === WebSocket.OPEN) {
-      client.send('hello');
-    }
-   });
-   */
+  ws.send(JSON.stringify(res));
 });
