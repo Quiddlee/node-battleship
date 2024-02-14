@@ -1,6 +1,7 @@
 namespace NodeJS {
   interface ProcessEnv {
-    PORT: string;
+    HTTP_PORT: string;
+    WSS_PORT: string;
     HOST: string;
   }
 }
