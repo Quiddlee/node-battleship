@@ -46,8 +46,7 @@ wss.msg(MsgType.REG, ({ data, ws }) => {
 });
 
 wss.msg(MsgType.CREATE_ROOM, ({ ws, clients }) => {
-  // TODO: abstract finding client in separate method
-  clients.forEach((client) => client === ws && rooms.createRoom(client.id));
+  rooms.createRoom(clients.query(ws).id);
 
   const updateRoomMsg: UpdateRoomServerRes = {
     type: MsgType.UPDATE_ROOM,
@@ -55,8 +54,7 @@ wss.msg(MsgType.CREATE_ROOM, ({ ws, clients }) => {
     id: 0,
   };
 
-  // TODO: abstract broadcast to all clients in separate method
-  clients.forEach((client) => client.send(updateRoomMsg));
+  clients.each().send(updateRoomMsg);
 });
 
 wss.msg(MsgType.ADD_USER_ROOM, ({ data }) => {

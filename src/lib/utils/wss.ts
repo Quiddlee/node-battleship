@@ -1,8 +1,9 @@
 import WebSocket, { WebSocketServer } from 'ws';
 
-import { MsgType } from '../../types/enums';
-import { Msg } from '../../types/interface';
-import { Cb, MsgTypesMap, WS, WsSendMsg } from '../../types/types';
+import { Clients } from './clients';
+import type { MsgType } from '../../types/enums';
+import type { Msg } from '../../types/interface';
+import type { Cb, MsgTypesMap, WS, WsSendMsg } from '../../types/types';
 
 export class WSS {
   private readonly msgTypesMap = <MsgTypesMap>{};
@@ -18,7 +19,7 @@ export class WSS {
     this.wss.on('connection', this.handleWssConnect.bind(this));
   }
 
-  msg<T extends MsgType = MsgType>(msgType: T, cb: Cb<T>) {
+  public msg<T extends MsgType = MsgType>(msgType: T, cb: Cb<T>) {
     this.msgTypesMap[msgType] = <Cb>cb;
     return this;
   }
@@ -31,13 +32,20 @@ export class WSS {
       const userMsg = <Msg>JSON.parse(data.toString());
       const userData = this.extractData(userMsg);
       const msgController = this.msgTypesMap[userMsg.type];
+      const clients = this.extendClients(
+        this.wss.clients as unknown as Set<WS>,
+      );
 
       msgController?.({
         data: userData,
         ws: extendedWs,
-        clients: this.wss.clients as unknown as Set<WS>,
+        clients,
       });
     });
+  }
+
+  private extendClients(clients: Set<WS>) {
+    return new Clients(clients);
   }
 
   private extendWebSocket(ws: WebSocket) {
