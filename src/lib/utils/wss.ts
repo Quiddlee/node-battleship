@@ -2,7 +2,7 @@ import { WebSocketServer } from 'ws';
 
 import { MsgType } from '../../types/enums';
 import { Msg } from '../../types/interface';
-import { Cb, MsgTypesMap } from '../../types/types';
+import { Cb, MsgTypesMap, WS } from '../../types/types';
 
 export class WSS {
   private readonly msgTypesMap = <MsgTypesMap>{};
@@ -25,7 +25,7 @@ export class WSS {
 
         this.msgTypesMap[userMsg.type]?.({
           data: userData,
-          ws,
+          ws: ws as WS,
           clients: wss.clients,
         });
       });

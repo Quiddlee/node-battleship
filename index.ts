@@ -55,9 +55,7 @@ wss.msg(MsgType.REG, ({ data, ws }) => {
 
   ws.send(JSON.stringify(createUserRes));
   ws.send(JSON.stringify(updateRoomMsg));
-
-  // TODO: add types to websocket client new 'id' field
-  Object.defineProperty(ws, 'id', { value: index });
+  ws.id = index;
 });
 
 wss.msg(MsgType.CREATE_ROOM, ({ ws, clients }) => {

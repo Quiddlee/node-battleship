@@ -4,6 +4,8 @@ import { MsgType } from './enums';
 import { CreateRoomMsg } from '../models/room/types/types';
 import { RegClientData } from '../models/user/types/types';
 
+export type WS = WebSocket & { id: number };
+
 export type MsgData = {
   [TMsg in MsgType]: TMsg extends MsgType.REG
     ? RegClientData
@@ -14,7 +16,7 @@ export type MsgData = {
 
 export type Cb<TData extends MsgType = MsgType> = (args: {
   data: MsgData[TData];
-  ws: WebSocket;
+  ws: WS;
   clients: Set<WebSocket>;
 }) => void;
 
