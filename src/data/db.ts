@@ -9,6 +9,10 @@ class DB {
     const newUserIndex = this.users.length - 1;
     return [newUser, newUserIndex];
   }
+
+  public findUser(id: number) {
+    return this.users[id];
+  }
 }
 
 export default new DB();

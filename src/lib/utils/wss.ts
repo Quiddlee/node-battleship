@@ -1,10 +1,11 @@
 import { WebSocketServer } from 'ws';
 
 import { MsgType } from '../../types/enums';
-import { Cb, Msg, TypesMap } from '../../types/types';
+import { Msg } from '../../types/interface';
+import { Cb, MsgTypesMap } from '../../types/types';
 
 export class WSS {
-  private readonly msgTypesMap = <TypesMap>{};
+  private readonly msgTypesMap = <MsgTypesMap>{};
 
   constructor(port: number) {
     const wss = new WebSocketServer({ port });
@@ -20,8 +21,9 @@ export class WSS {
 
       ws.on('message', (data) => {
         const userMsg = <Msg>JSON.parse(data.toString());
-        const userData = JSON.parse(userMsg.data);
-        this.msgTypesMap[userMsg.type]({
+        const userData = this.extractData(userMsg);
+
+        this.msgTypesMap[userMsg.type]?.({
           data: userData,
           ws,
           clients: wss.clients,
@@ -33,5 +35,17 @@ export class WSS {
   msg<T extends MsgType = MsgType>(msgType: T, cb: Cb<T>) {
     this.msgTypesMap[msgType] = <Cb>cb;
     return this;
+  }
+
+  private extractData(userMsg: Msg) {
+    let userData = null;
+
+    try {
+      userData = JSON.parse(userMsg.data);
+    } catch (e) {
+      //
+    }
+
+    return userData;
   }
 }

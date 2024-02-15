@@ -1,31 +1,15 @@
 import WebSocket from 'ws';
 
 import { MsgType } from './enums';
-
-export type Msg = {
-  type: MsgType;
-  data: string;
-  id: 0;
-};
-
-export type RegMsg = Msg & {
-  type: MsgType.REG;
-};
-
-export type RegClientData = {
-  name: string;
-  password: string;
-};
-
-export type RegServerData = {
-  name: string;
-  index: number;
-  error: boolean;
-  errorText: string;
-};
+import { CreateRoomMsg } from '../models/room/types/types';
+import { RegClientData } from '../models/user/types/types';
 
 export type MsgData = {
-  [TMsg in MsgType]: TMsg extends MsgType.REG ? RegClientData : unknown;
+  [TMsg in MsgType]: TMsg extends MsgType.REG
+    ? RegClientData
+    : TMsg extends MsgType.CREATE_ROOM
+      ? CreateRoomMsg
+      : unknown;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {
@@ -34,4 +18,4 @@ export type Cb<TData extends MsgType = MsgType> = (args: {
   clients: Set<WebSocket>;
 }) => void;
 
-export type TypesMap = Record<MsgType, Cb>;
+export type MsgTypesMap = Record<MsgType, Cb>;
