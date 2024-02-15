@@ -2,5 +2,5 @@
   "watch": ["./**/*.ts"],
   "ext": "ts",
   "ignore": ["node_modules"],
-  "exec": "ts-node-dev --files index.ts"
+  "exec": "tsx index.ts"
 }
