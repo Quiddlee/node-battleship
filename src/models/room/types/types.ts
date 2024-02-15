@@ -27,18 +27,20 @@ export type CreateGameMsg = Msg & {
   type: MsgType.CREATE_GAME;
 };
 
-export type UpdateRoomData = Array<{
+export type UpdateRoomData = {
   roomId: number;
   roomUsers: Array<{
     name: string;
     index: number;
   }>;
-}>;
+};
+
+export type UpdateRoomDataRes = Array<UpdateRoomData>;
 
 export type UpdateRoomMsg = Msg & {
   type: MsgType.UPDATE_ROOM;
 };
 
-export type UpdateRoomServerResponse = Omit<UpdateRoomMsg, 'data'> & {
-  data: UpdateRoomData;
+export type UpdateRoomServerRes = Omit<UpdateRoomMsg, 'data'> & {
+  data: UpdateRoomDataRes;
 };

@@ -3,9 +3,10 @@ import 'dotenv/config';
 
 import db from './src/data/db';
 import { httpServer } from './src/http_server';
+import prepareRoomDataResponse from './src/lib/utils/prepareRoomDataResponse';
 import { WSS } from './src/lib/utils/wss';
 import rooms from './src/models/room/rooms';
-import { UpdateRoomServerResponse } from './src/models/room/types/types';
+import { UpdateRoomServerRes } from './src/models/room/types/types';
 import { RegServerResponse } from './src/models/user/types/types';
 import { MsgType } from './src/types/enums';
 
@@ -34,20 +35,9 @@ wss.msg(MsgType.REG, ({ data, ws }) => {
     id: 0,
   };
 
-  const updateRoomMsg: UpdateRoomServerResponse = {
+  const updateRoomMsg: UpdateRoomServerRes = {
     type: MsgType.UPDATE_ROOM,
-    // TODO: Abstract find rooms with 1 player in separate method
-    data: rooms.findRooms().map((room) => ({
-      roomId: room.idGame,
-      roomUsers: room.idPlayers.map((id) => {
-        const { login } = db.findUser(id);
-
-        return {
-          name: login,
-          index: id,
-        };
-      }),
-    })),
+    data: rooms.findRooms().map(prepareRoomDataResponse),
     id: 0,
   };
 
@@ -59,19 +49,9 @@ wss.msg(MsgType.CREATE_ROOM, ({ ws, clients }) => {
   // TODO: abstract finding client in separate method
   clients.forEach((client) => client === ws && rooms.createRoom(client.id));
 
-  const updateRoomMsg: UpdateRoomServerResponse = {
+  const updateRoomMsg: UpdateRoomServerRes = {
     type: MsgType.UPDATE_ROOM,
-    data: rooms.findRooms().map((room) => ({
-      roomId: room.idGame,
-      roomUsers: room.idPlayers.map((id) => {
-        const { login } = db.findUser(id);
-
-        return {
-          name: login,
-          index: id,
-        };
-      }),
-    })),
+    data: rooms.findRooms().map(prepareRoomDataResponse),
     id: 0,
   };
 
