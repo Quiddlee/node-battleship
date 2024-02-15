@@ -5,8 +5,8 @@ import db from './src/data/db';
 import { httpServer } from './src/http_server';
 import { WSS } from './src/lib/utils/wss';
 import rooms from './src/models/room/rooms';
-import { UpdateRoomData, UpdateRoomMsg } from './src/models/room/types/types';
-import { RegMsg, RegServerData } from './src/models/user/types/types';
+import { UpdateRoomServerResponse } from './src/models/room/types/types';
+import { RegServerResponse } from './src/models/user/types/types';
 import { MsgType } from './src/types/enums';
 
 const HTTP_PORT = Number(process.env.HTTP_PORT);
@@ -23,72 +23,60 @@ wss.msg(MsgType.REG, ({ data, ws }) => {
   const [user, index] = db.createUser(name, password);
 
   // TODO: abstract creating response in separate method
-  const createUserResData: RegServerData = {
-    name: user.login,
-    index,
-    error: false,
-    errorText: '',
-  };
-  const createUserRes: RegMsg = {
+  const createUserRes: RegServerResponse = {
     type: MsgType.REG,
-    data: JSON.stringify(createUserResData),
+    data: {
+      name: user.login,
+      index,
+      error: false,
+      errorText: '',
+    },
     id: 0,
   };
 
-  const updateRoomResData: UpdateRoomData = rooms.findRooms().map((room) => ({
-    roomId: room.idGame,
-    roomUsers: room.idPlayers.map((id) => {
-      const { login } = db.findUser(id);
-
-      return {
-        name: login,
-        index: id,
-      };
-    }),
-  }));
-
-  const updateRoomMsg: UpdateRoomMsg = {
+  const updateRoomMsg: UpdateRoomServerResponse = {
     type: MsgType.UPDATE_ROOM,
-    data: JSON.stringify(updateRoomResData),
+    // TODO: Abstract find rooms with 1 player in separate method
+    data: rooms.findRooms().map((room) => ({
+      roomId: room.idGame,
+      roomUsers: room.idPlayers.map((id) => {
+        const { login } = db.findUser(id);
+
+        return {
+          name: login,
+          index: id,
+        };
+      }),
+    })),
     id: 0,
   };
 
-  ws.send(JSON.stringify(createUserRes));
-  ws.send(JSON.stringify(updateRoomMsg));
-  ws.id = index;
+  ws.send(createUserRes).send(updateRoomMsg);
+  Object.defineProperty(ws, 'id', { value: index });
 });
 
 wss.msg(MsgType.CREATE_ROOM, ({ ws, clients }) => {
-  clients.forEach((client) => {
-    if (client === ws) {
-      const id = 'id' in client && (client.id as number);
-      if (Number.isFinite(id) && id !== false) {
-        rooms.createRoom(id);
-      } else {
-        throw new Error("Cannot find client's id!");
-      }
-    }
-  });
+  // TODO: abstract finding client in separate method
+  clients.forEach((client) => client === ws && rooms.createRoom(client.id));
 
-  const updateRoomResData: UpdateRoomData = rooms.findRooms().map((room) => ({
-    roomId: room.idGame,
-    roomUsers: room.idPlayers.map((id) => {
-      const { login } = db.findUser(id);
-
-      return {
-        name: login,
-        index: id,
-      };
-    }),
-  }));
-
-  const updateRoomMsg: UpdateRoomMsg = {
+  const updateRoomMsg: UpdateRoomServerResponse = {
     type: MsgType.UPDATE_ROOM,
-    data: JSON.stringify(updateRoomResData),
+    data: rooms.findRooms().map((room) => ({
+      roomId: room.idGame,
+      roomUsers: room.idPlayers.map((id) => {
+        const { login } = db.findUser(id);
+
+        return {
+          name: login,
+          index: id,
+        };
+      }),
+    })),
     id: 0,
   };
 
-  clients.forEach((client) => client.send(JSON.stringify(updateRoomMsg)));
+  // TODO: abstract broadcast to all clients in separate method
+  clients.forEach((client) => client.send(updateRoomMsg));
 });
 
 wss.msg(MsgType.ADD_USER_ROOM, ({ data }) => {

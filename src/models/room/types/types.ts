@@ -38,3 +38,7 @@ export type UpdateRoomData = Array<{
 export type UpdateRoomMsg = Msg & {
   type: MsgType.UPDATE_ROOM;
 };
+
+export type UpdateRoomServerResponse = Omit<UpdateRoomMsg, 'data'> & {
+  data: UpdateRoomData;
+};

@@ -16,3 +16,7 @@ export type RegServerData = {
   error: boolean;
   errorText: string;
 };
+
+export type RegServerResponse = Omit<RegMsg, 'data'> & {
+  data: RegServerData;
+};
