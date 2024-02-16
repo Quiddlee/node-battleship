@@ -1,4 +1,4 @@
-import db from '../../data/db';
+import db from '../../data/usersDB';
 import { Room } from '../../models/room/room';
 import { UpdateRoomData } from '../../models/room/types/types';
 

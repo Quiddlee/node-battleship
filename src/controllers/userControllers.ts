@@ -1,4 +1,5 @@
-import db from '../data/db';
+import usersDB from '../data/usersDB';
+import winnersDB from '../data/winnersDB';
 import { RegServerData, WinnersDataRes } from '../models/user/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
@@ -13,7 +14,7 @@ import { Cb } from '../types/types';
  */
 export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
   const { name, password } = data;
-  const [user, index] = db.createUser(name, password);
+  const [user, index] = usersDB.createUser(name, password);
 
   const createdUserData: RegServerData = {
     name: user.login,
@@ -32,9 +33,8 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
  * @param {Cb<MsgType.REG>} ws.send - A callback function that sends a message to the client.
  * @returns {void} - Returns nothing
  */
-
 export const sendWinners: Cb<MsgType.REG> = ({ ws }) => {
-  const { winners } = db;
+  const { winners } = winnersDB;
 
   const winnersData: WinnersDataRes = winners.map((w) => ({
     name: w.login,
