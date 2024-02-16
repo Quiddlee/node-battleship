@@ -2,6 +2,7 @@ import type WebSocket from 'ws';
 
 import type { MsgType } from './enums';
 import type { Clients } from '../lib/utils/clients';
+import { CreateGameDataRes } from '../models/game/types/types';
 import {
   AddUserRoomData,
   CreateRoomMsg,
@@ -39,7 +40,9 @@ export type MsgDataServer = {
         ? UpdateRoomDataRes
         : TMsg extends MsgType.UPDATE_WINNER
           ? WinnersDataRes
-          : void;
+          : TMsg extends MsgType.CREATE_GAME
+            ? CreateGameDataRes
+            : void;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import 'dotenv/config';
+import { createGame } from './src/controllers/gamesController';
 import {
   addUserToRoom,
   createRoom,
@@ -21,4 +22,4 @@ const wss = new WSS(WSS_PORT);
 wss
   .msg(MsgType.REG, regUser, sendRooms, sendWinners)
   .msg(MsgType.CREATE_ROOM, createRoom, sendRooms)
-  .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms);
+  .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms, createGame);
