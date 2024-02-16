@@ -3,6 +3,7 @@ import { User } from '../models/user/user';
 const testWinner = new User('Bohdan', '1');
 testWinner.addWin();
 
+// TODO: break the class into 2 smaller one's with only users and only winners and extend the db
 class DB {
   private readonly users: User[] = [];
 
