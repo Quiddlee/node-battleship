@@ -3,7 +3,11 @@ import type WebSocket from 'ws';
 import type { MsgType } from './enums';
 import type { Clients } from '../lib/utils/clients';
 import { CreateRoomMsg, UpdateRoomDataRes } from '../models/room/types/types';
-import type { RegClientData, RegServerData } from '../models/user/types/types';
+import type {
+  RegClientData,
+  RegServerData,
+  WinnersDataRes,
+} from '../models/user/types/types';
 
 export type SendFn = <T extends MsgType>(type: T, data: MsgDataServer[T]) => WS;
 
@@ -17,7 +21,7 @@ export type MsgDataClient = {
     ? RegClientData
     : TMsg extends MsgType.CREATE_ROOM
       ? CreateRoomMsg
-      : unknown;
+      : void;
 };
 
 export type MsgDataServer = {
@@ -27,7 +31,9 @@ export type MsgDataServer = {
       ? CreateRoomMsg
       : TMsg extends MsgType.UPDATE_ROOM
         ? UpdateRoomDataRes
-        : unknown;
+        : TMsg extends MsgType.UPDATE_WINNER
+          ? WinnersDataRes
+          : void;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {

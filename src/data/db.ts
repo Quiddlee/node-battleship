@@ -1,7 +1,12 @@
 import { User } from '../models/user/user';
 
+const testWinner = new User('Bohdan', '1');
+testWinner.addWin();
+
 class DB {
   private readonly users: User[] = [];
+
+  readonly #winners: User[] = [testWinner];
 
   public createUser(login: string, password: string): [User, number] {
     const newUser = new User(login, password);
@@ -12,6 +17,16 @@ class DB {
 
   public findUser(id: number) {
     return this.users[id];
+  }
+
+  public updateWinners(id: number) {
+    const winner = this.findUser(id);
+    winner.addWin();
+    this.#winners.push(winner);
+  }
+
+  public get winners() {
+    return this.#winners;
   }
 }
 

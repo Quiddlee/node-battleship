@@ -1,5 +1,5 @@
 import db from '../data/db';
-import { RegServerData } from '../models/user/types/types';
+import { RegServerData, WinnersDataRes } from '../models/user/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
 
@@ -23,4 +23,15 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
 
   ws.send(MsgType.REG, createdUserData);
   Object.defineProperty(ws, 'id', { value: index });
+};
+
+export const sendWinners: Cb<MsgType.REG> = ({ ws }) => {
+  const { winners } = db;
+
+  const winnersData: WinnersDataRes = winners.map((w) => ({
+    name: w.login,
+    wins: w.wins,
+  }));
+
+  ws.send(MsgType.UPDATE_WINNER, winnersData);
 };

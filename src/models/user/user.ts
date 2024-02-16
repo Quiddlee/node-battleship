@@ -7,21 +7,32 @@ export class User {
 
   readonly #id: string;
 
+  #wins: number = 0;
+
   constructor(login: string, password: string) {
     this.#login = login;
     this.#password = password;
     this.#id = randomUUID();
   }
 
-  get login() {
+  public get login() {
     return this.#login;
   }
 
-  get password() {
+  public get password() {
     return this.#password;
   }
 
-  get id() {
+  public get id() {
     return this.#id;
+  }
+
+  public get wins() {
+    return this.#wins;
+  }
+
+  public addWin() {
+    this.#wins += 1;
+    return this;
   }
 }

@@ -9,3 +9,8 @@ export type RegServerData = {
   error: boolean;
   errorText: string;
 };
+
+export type WinnersDataRes = {
+  name: string;
+  wins: number;
+}[];
