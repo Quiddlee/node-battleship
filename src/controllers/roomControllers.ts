@@ -9,9 +9,7 @@ import { Cb } from '../types/types';
  * @param {Object} clients - An object containing the clients to send the data to.
  * @param {Cb<MsgType.REG | MsgType.CREATE_ROOM>} clients.sendEach - A callback function that sends a message to each client.
  */
-export const sendRooms: Cb<
-  MsgType.REG | MsgType.CREATE_ROOM | MsgType.ADD_USER_ROOM
-> = ({ clients }) => {
+export const sendRooms: Cb = ({ clients }) => {
   const openRooms: UpdateRoomDataRes = rooms
     .findRooms()
     .map(prepareRoomDataResponse);
