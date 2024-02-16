@@ -9,6 +9,8 @@ export class Room {
   }
 
   public addUser(userIndex: number) {
-    this.idPlayers.push(userIndex);
+    // TODO: decide what to do if the user already in the room
+    const isUserAlreadyInTheRoom = this.idPlayers.includes(userIndex);
+    if (!isUserAlreadyInTheRoom) this.idPlayers.push(userIndex);
   }
 }
