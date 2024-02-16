@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import 'dotenv/config';
-import { createRoom, sendRooms } from './src/controllers/roomControllers';
+import {
+  addUserToRoom,
+  createRoom,
+  sendRooms,
+} from './src/controllers/roomControllers';
 import { regUser, sendWinners } from './src/controllers/userControllers';
 import { httpServer } from './src/http_server';
 import { WSS } from './src/lib/utils/wss';
@@ -17,6 +21,4 @@ const wss = new WSS(WSS_PORT);
 wss
   .msg(MsgType.REG, regUser, sendRooms, sendWinners)
   .msg(MsgType.CREATE_ROOM, createRoom, sendRooms)
-  .msg(MsgType.ADD_USER_ROOM, ({ data }) => {
-    console.log(data);
-  });
+  .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms);

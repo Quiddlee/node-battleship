@@ -2,7 +2,11 @@ import type WebSocket from 'ws';
 
 import type { MsgType } from './enums';
 import type { Clients } from '../lib/utils/clients';
-import { CreateRoomMsg, UpdateRoomDataRes } from '../models/room/types/types';
+import {
+  AddUserRoomData,
+  CreateRoomMsg,
+  UpdateRoomDataRes,
+} from '../models/room/types/types';
 import type {
   RegClientData,
   RegServerData,
@@ -21,7 +25,9 @@ export type MsgDataClient = {
     ? RegClientData
     : TMsg extends MsgType.CREATE_ROOM
       ? CreateRoomMsg
-      : void;
+      : TMsg extends MsgType.ADD_USER_ROOM
+        ? AddUserRoomData
+        : void;
 };
 
 export type MsgDataServer = {
