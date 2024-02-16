@@ -11,7 +11,7 @@ import { Cb } from '../types/types';
  */
 export const sendRooms: Cb = ({ clients }) => {
   const openRooms: UpdateRoomDataRes = rooms
-    .findRooms()
+    .findRoomsWithOnePlayer()
     .map(prepareRoomDataResponse);
 
   clients.sendEach(MsgType.UPDATE_ROOM, openRooms);

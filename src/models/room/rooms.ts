@@ -13,7 +13,7 @@ class Rooms {
     return room;
   }
 
-  public findRooms() {
+  public findRoomsWithOnePlayer() {
     return this.roomList.filter((rooms) => rooms.idPlayers.length === 1);
   }
 
