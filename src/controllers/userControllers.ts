@@ -25,6 +25,12 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
   Object.defineProperty(ws, 'id', { value: index });
 };
 
+/**
+ * Sends the winners data to the client.
+ * @param {Object} ws - The WebSocket connection of the client.
+ * @param {Cb<MsgType.REG>} ws.send - A callback function that sends a message to the client.
+ */
+
 export const sendWinners: Cb<MsgType.REG> = ({ ws }) => {
   const { winners } = db;
 
