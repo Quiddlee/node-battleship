@@ -9,6 +9,7 @@ import { Cb } from '../types/types';
  * @param {string} data.name - The name of the user.
  * @param {string} data.password - The password of the user.
  * @param {Object} ws - The WebSocket connection of the client.
+ * @returns {void} - Returns nothing
  */
 export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
   const { name, password } = data;
@@ -29,6 +30,7 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
  * Sends the winners data to the client.
  * @param {Object} ws - The WebSocket connection of the client.
  * @param {Cb<MsgType.REG>} ws.send - A callback function that sends a message to the client.
+ * @returns {void} - Returns nothing
  */
 
 export const sendWinners: Cb<MsgType.REG> = ({ ws }) => {

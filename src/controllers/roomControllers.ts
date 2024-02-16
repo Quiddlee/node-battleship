@@ -8,6 +8,7 @@ import { Cb } from '../types/types';
  * Updates the rooms data for all clients.
  * @param {Object} clients - An object containing the clients to send the data to.
  * @param {Cb<MsgType.REG | MsgType.CREATE_ROOM>} clients.sendEach - A callback function that sends a message to each client.
+ * @returns {void} - Returns nothing
  */
 export const sendRooms: Cb = ({ clients }) => {
   const openRooms: UpdateRoomDataRes = roomsDB
@@ -22,6 +23,7 @@ export const sendRooms: Cb = ({ clients }) => {
  * @param {Object} ws - The WebSocket connection of the client.
  * @param {Object} clients - An object containing the clients data.
  * @param {Cb<MsgType.CREATE_ROOM>} clients.query - A callback function that returns the client data by WebSocket connection.
+ * @returns {void} - Returns nothing
  */
 export const createRoom: Cb<MsgType.CREATE_ROOM> = ({ ws, clients }) => {
   roomsDB.createRoom(clients.query(ws).id);
@@ -33,6 +35,7 @@ export const createRoom: Cb<MsgType.CREATE_ROOM> = ({ ws, clients }) => {
  * @param {number} data.indexRoom - The index of the room to join.
  * @param {Object} ws - The WebSocket connection of the user.
  * @param {number} ws.id - The id of the user.
+ * @returns {void} - Returns nothing
  */
 export const addUserToRoom: Cb<MsgType.ADD_USER_ROOM> = ({
   data: { indexRoom },
