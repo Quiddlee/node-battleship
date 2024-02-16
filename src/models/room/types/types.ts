@@ -1,11 +1,6 @@
 import { MsgType } from '../../../types/enums';
 import { Msg } from '../../../types/interface';
 
-export type Room = {
-  idGame: number;
-  idPlayers: [number] | [number, number];
-};
-
 export type CreateRoomMsg = Msg & {
   type: MsgType.CREATE_ROOM;
 };

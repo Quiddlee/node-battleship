@@ -1,5 +1,5 @@
+import roomsDB from '../data/roomsDB';
 import prepareRoomDataResponse from '../lib/utils/prepareRoomDataResponse';
-import rooms from '../models/room/rooms';
 import { UpdateRoomDataRes } from '../models/room/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
@@ -10,8 +10,8 @@ import { Cb } from '../types/types';
  * @param {Cb<MsgType.REG | MsgType.CREATE_ROOM>} clients.sendEach - A callback function that sends a message to each client.
  */
 export const sendRooms: Cb = ({ clients }) => {
-  const openRooms: UpdateRoomDataRes = rooms
-    .findRoomsWithOnePlayer()
+  const openRooms: UpdateRoomDataRes = roomsDB
+    .filterOnePlayerRoom()
     .map(prepareRoomDataResponse);
 
   clients.sendEach(MsgType.UPDATE_ROOM, openRooms);
@@ -24,7 +24,7 @@ export const sendRooms: Cb = ({ clients }) => {
  * @param {Cb<MsgType.CREATE_ROOM>} clients.query - A callback function that returns the client data by WebSocket connection.
  */
 export const createRoom: Cb<MsgType.CREATE_ROOM> = ({ ws, clients }) => {
-  rooms.createRoom(clients.query(ws).id);
+  roomsDB.createRoom(clients.query(ws).id);
 };
 
 /**
@@ -34,7 +34,9 @@ export const createRoom: Cb<MsgType.CREATE_ROOM> = ({ ws, clients }) => {
  * @param {Object} ws - The WebSocket connection of the user.
  * @param {number} ws.id - The id of the user.
  */
-export const addUserToRoom: Cb<MsgType.ADD_USER_ROOM> = ({ data, ws }) => {
-  const { indexRoom } = data;
-  rooms.addUserRoom(indexRoom, ws.id);
+export const addUserToRoom: Cb<MsgType.ADD_USER_ROOM> = ({
+  data: { indexRoom },
+  ws,
+}) => {
+  roomsDB.addUserRoom(indexRoom, ws.id);
 };
