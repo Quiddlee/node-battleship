@@ -1,3 +1,5 @@
+import { isNativeError } from 'node:util/types';
+
 import WebSocket, { WebSocketServer } from 'ws';
 
 import { Clients } from './clients';
@@ -39,22 +41,26 @@ export class WSS {
         this.wss.clients as unknown as Set<WS>,
       );
 
-      if (Array.isArray(msgController)) {
-        msgController.forEach((controller) => {
-          controller?.({
-            data: userData,
-            ws: extendedWs,
-            clients,
+      try {
+        if (Array.isArray(msgController)) {
+          msgController.forEach((controller) => {
+            controller?.({
+              data: userData,
+              ws: extendedWs,
+              clients,
+            });
           });
-        });
-        return;
-      }
+          return;
+        }
 
-      msgController?.({
-        data: userData,
-        ws: extendedWs,
-        clients,
-      });
+        msgController?.({
+          data: userData,
+          ws: extendedWs,
+          clients,
+        });
+      } catch (e) {
+        if (isNativeError(e)) console.log(e.message);
+      }
     });
   }
 
