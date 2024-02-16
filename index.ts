@@ -54,7 +54,7 @@ wss.msg(MsgType.CREATE_ROOM, ({ ws, clients }) => {
     id: 0,
   };
 
-  clients.each().send(updateRoomMsg);
+  clients.eachSend(updateRoomMsg);
 });
 
 wss.msg(MsgType.ADD_USER_ROOM, ({ data }) => {
