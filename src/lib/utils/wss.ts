@@ -3,7 +3,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 import { Clients } from './clients';
 import type { MsgType } from '../../types/enums';
 import type { Msg } from '../../types/interface';
-import type { Cb, MsgTypesMap, WS, WsSendMsg } from '../../types/types';
+import { Cb, MsgDataServer, MsgTypesMap, WS } from '../../types/types';
 
 export class WSS {
   private readonly msgTypesMap = <MsgTypesMap>{};
@@ -20,8 +20,8 @@ export class WSS {
     this.wss.on('connection', this.handleWssConnect.bind(this));
   }
 
-  public msg<T extends MsgType = MsgType>(msgType: T, cb: Cb<T>) {
-    this.msgTypesMap[msgType] = <Cb>cb;
+  public msg<T extends MsgType = MsgType>(msgType: T, ...cbs: Cb<T>[]) {
+    this.msgTypesMap[msgType] = <Cb | Cb[]>cbs;
     return this;
   }
 
@@ -36,6 +36,17 @@ export class WSS {
       const clients = this.extendClients(
         this.wss.clients as unknown as Set<WS>,
       );
+
+      if (Array.isArray(msgController)) {
+        msgController.forEach((controller) => {
+          controller?.({
+            data: userData,
+            ws: extendedWs,
+            clients,
+          });
+        });
+        return;
+      }
 
       msgController?.({
         data: userData,
@@ -59,10 +70,13 @@ export class WSS {
         enumerable: true,
       },
       send: {
-        value(msg: WsSendMsg) {
-          const cloneMsg = { ...msg };
-          cloneMsg.data = JSON.stringify(cloneMsg.data);
-          sendResponse(JSON.stringify(cloneMsg));
+        value<T extends MsgType>(type: T, data: MsgDataServer[T]) {
+          const msg: Msg = {
+            type,
+            data: JSON.stringify(data),
+            id: 0,
+          };
+          sendResponse(JSON.stringify(msg));
           return this;
         },
       },

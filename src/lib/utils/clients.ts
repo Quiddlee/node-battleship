@@ -1,4 +1,5 @@
-import type { WS, WsSendMsg } from '../../types/types';
+import { MsgType } from '../../types/enums';
+import type { MsgDataServer, WS } from '../../types/types';
 
 export class Clients {
   private readonly clients: Set<WS>;
@@ -11,8 +12,8 @@ export class Clients {
     return <WS>Array.from(this.clients).find((client) => client === ws);
   }
 
-  eachSend(msg: WsSendMsg) {
-    this.clients.forEach((client) => client.send(msg));
+  sendEach<T extends MsgType>(type: T, data: MsgDataServer[T]) {
+    this.clients.forEach((client) => client.send(type, data));
     return this;
   }
 }
