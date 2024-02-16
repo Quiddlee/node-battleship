@@ -20,6 +20,8 @@ export class WSS {
     this.wss.on('connection', this.handleWssConnect.bind(this));
   }
 
+  public msg<T extends MsgType = MsgType>(msgType: T, cb: Cb<T>): this;
+  public msg<T extends MsgType = MsgType>(msgType: T, ...cbs: Cb<T>[]): this;
   public msg<T extends MsgType = MsgType>(msgType: T, ...cbs: Cb<T>[]) {
     this.msgTypesMap[msgType] = <Cb | Cb[]>cbs;
     return this;
