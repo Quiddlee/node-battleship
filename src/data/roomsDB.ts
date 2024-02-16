@@ -10,7 +10,7 @@ class RoomsDB {
   }
 
   public filterOnePlayerRoom() {
-    return this.roomList.filter((rooms) => rooms.idPlayers.length === 1);
+    return this.roomList.filter((rooms) => rooms.roomPlayersId.length === 1);
   }
 
   public findRoom(roomIndex: number) {

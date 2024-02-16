@@ -1,16 +1,16 @@
 export class Room {
-  readonly idGame: number;
+  readonly roomId: number;
 
-  readonly idPlayers: [number] | [number, number];
+  readonly roomPlayersId: [number] | [number, number];
 
-  constructor(idGame: number, idPlayer: number) {
-    this.idGame = idGame;
-    this.idPlayers = [idPlayer];
+  constructor(roomId: number, creatorId: number) {
+    this.roomId = roomId;
+    this.roomPlayersId = [creatorId];
   }
 
   public addUser(userIndex: number) {
     // TODO: decide what to do if the user already in the room
-    const isUserAlreadyInTheRoom = this.idPlayers.includes(userIndex);
-    if (!isUserAlreadyInTheRoom) this.idPlayers.push(userIndex);
+    const isUserAlreadyInTheRoom = this.roomPlayersId.includes(userIndex);
+    if (!isUserAlreadyInTheRoom) this.roomPlayersId.push(userIndex);
   }
 }

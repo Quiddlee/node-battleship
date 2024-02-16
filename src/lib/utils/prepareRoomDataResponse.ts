@@ -8,8 +8,8 @@ import { UpdateRoomData } from '../../models/room/types/types';
  * @returns {UpdateRoomData} The room data response object with roomId and roomUsers properties
  */
 const prepareRoomDataResponse = (room: Room): UpdateRoomData => ({
-  roomId: room.idGame,
-  roomUsers: room.idPlayers.map((id) => {
+  roomId: room.roomId,
+  roomUsers: room.roomPlayersId.map((id) => {
     const { login } = db.findUser(id);
 
     return {
