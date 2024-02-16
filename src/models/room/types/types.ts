@@ -9,19 +9,6 @@ export type AddUserRoomData = {
   indexRoom: number;
 };
 
-export type AddUserRoomMsg = Msg & {
-  type: MsgType.CREATE_ROOM;
-};
-
-export type CreateGameData = {
-  idGame: number;
-  idPlayer: number;
-};
-
-export type CreateGameMsg = Msg & {
-  type: MsgType.CREATE_GAME;
-};
-
 export type UpdateRoomData = {
   roomId: number;
   roomUsers: Array<{
@@ -31,11 +18,3 @@ export type UpdateRoomData = {
 };
 
 export type UpdateRoomDataRes = Array<UpdateRoomData>;
-
-export type UpdateRoomMsg = Msg & {
-  type: MsgType.UPDATE_ROOM;
-};
-
-export type UpdateRoomServerRes = Omit<UpdateRoomMsg, 'data'> & {
-  data: UpdateRoomDataRes;
-};
