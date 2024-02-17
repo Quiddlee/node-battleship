@@ -9,6 +9,10 @@ class GamesDB {
     this.gameList.push(game);
     return game;
   }
+
+  public findGame(index: number) {
+    return this.gameList[index];
+  }
 }
 
 export default new GamesDB();

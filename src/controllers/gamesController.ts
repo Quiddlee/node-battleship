@@ -1,6 +1,9 @@
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
-import { CreateGameDataRes } from '../models/game/types/types';
+import {
+  CreateGameDataRes,
+  StartGameDataRes,
+} from '../models/game/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
 
@@ -32,6 +35,42 @@ export const createGame: Cb<MsgType.ADD_USER_ROOM> = ({
   });
 };
 
-export const addShips: Cb<MsgType.ADD_SHIPS> = ({ data }) => {
-  console.log(data);
+/**
+ * Adds ships to the game specific instance.
+ * @param {Object} args - The object containing the data property.
+ * @param {Object} args.data - The data sent by the client.
+ * @param {string} args.data.gameId - The ID of the game.
+ * @param {Array<Ship>} args.data.ships - The array of ships to be added.
+ * @param {number} args.data.indexPlayer - The index of the player who added the ships.
+ */
+export const addShips: Cb<MsgType.ADD_SHIPS> = ({
+  data: { gameId, ships, indexPlayer },
+}) => {
+  const game = gamesDB.findGame(gameId);
+  game.addShips(indexPlayer, ships);
+};
+
+/**
+ * Starts the game and sends the game data to all players.
+ * @param {Object} args - The object containing the data and clients properties.
+ * @param {Object} args.data - The data sent by the client.
+ * @param {string} args.data.gameId - The ID of the game.
+ * @param {Clients} args.clients - The clients manager instance.
+ */
+export const startGame: Cb<MsgType.ADD_SHIPS> = ({
+  data: { gameId },
+  clients,
+}) => {
+  const game = gamesDB.findGame(gameId);
+  const { playerIds } = game;
+
+  if (!game.isReady()) return;
+
+  playerIds.forEach((id) => {
+    const resData: StartGameDataRes = {
+      ships: game.getPlayerShips(id),
+      currentPlayerIndex: id,
+    };
+    clients.queryById(id).send(MsgType.START_GAME, resData);
+  });
 };

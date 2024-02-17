@@ -5,4 +5,6 @@ export enum MsgType {
   CREATE_GAME = 'create_game',
   CREATE_ROOM = 'create_room',
   UPDATE_ROOM = 'update_room',
+  ADD_SHIPS = 'add_ships',
+  START_GAME = 'start_game',
 }

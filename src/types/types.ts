@@ -2,12 +2,16 @@ import type WebSocket from 'ws';
 
 import type { MsgType } from './enums';
 import type { Clients } from '../lib/utils/clients';
-import { CreateGameDataRes } from '../models/game/types/types';
+import {
+  CreateGameDataRes,
+  StartGameDataRes,
+} from '../models/game/types/types';
 import {
   AddUserRoomData,
   CreateRoomMsg,
   UpdateRoomDataRes,
 } from '../models/room/types/types';
+import { AddShipData } from '../models/ship/types/types';
 import type {
   RegClientData,
   RegServerData,
@@ -28,7 +32,9 @@ export type MsgDataClient = {
       ? CreateRoomMsg
       : TMsg extends MsgType.ADD_USER_ROOM
         ? AddUserRoomData
-        : void;
+        : TMsg extends MsgType.ADD_SHIPS
+          ? AddShipData
+          : void;
 };
 
 export type MsgDataServer = {
@@ -42,7 +48,9 @@ export type MsgDataServer = {
           ? WinnersDataRes
           : TMsg extends MsgType.CREATE_GAME
             ? CreateGameDataRes
-            : void;
+            : TMsg extends MsgType.START_GAME
+              ? StartGameDataRes
+              : void;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {
