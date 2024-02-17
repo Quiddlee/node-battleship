@@ -12,6 +12,10 @@ export class Ship {
 
   private posPoints: number[] = [];
 
+  private readonly posPointsHit: number[] = [];
+
+  private isKilled = false;
+
   constructor({ type, direction, length, position }: Ship) {
     this.position = position;
     this.direction = direction;
@@ -24,19 +28,22 @@ export class Ship {
   public hitStatus(x: number, y: number) {
     const isVertical = this.direction;
     const { x: shipX, y: shipY } = this.position;
-    const majorCoords = isVertical ? y : x;
+    const majorCoord = isVertical ? y : x;
     const minorCoord = isVertical ? x : y;
     const minorShipCoord = isVertical ? shipX : shipY;
 
+    if (this.posPointsHit.includes(majorCoord) && this.isKilled)
+      return HitStatus.KILLED;
+    if (this.posPointsHit.includes(majorCoord)) return HitStatus.SHOT;
+
     const isMinorHit = minorCoord === minorShipCoord;
-    const indexOfMajorHitCoord = this.posPoints.indexOf(majorCoords);
-    const isMajorHit = indexOfMajorHitCoord !== -1;
+    const isMajorHit = this.posPoints.includes(majorCoord);
 
     if (!isMajorHit || !isMinorHit) return HitStatus.MISS;
+    this.posPointsHit.push(majorCoord);
 
-    this.posPoints.splice(indexOfMajorHitCoord, 1);
-
-    if (this.posPoints.length === 0) {
+    if (this.posPoints.length === this.posPointsHit.length) {
+      this.isKilled = true;
       return HitStatus.KILLED;
     }
 
