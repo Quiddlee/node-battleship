@@ -12,7 +12,7 @@ export class Ship {
 
   private posPoints: number[] = [];
 
-  private readonly posPointsHit: number[] = [];
+  public readonly posPointsHit: number[] = [];
 
   private isKilled = false;
 

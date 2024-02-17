@@ -105,21 +105,42 @@ export const attack: Cb<MsgType.ATTACK> = ({
   data: { gameId, indexPlayer, x, y },
   clients,
 }) => {
+  // TODO: encapsulate all the ship logic into ship class
   const game = gamesDB.findGame(gameId);
   const notCurrPlayersTurn = game.currentPlayerTurn !== indexPlayer;
 
   if (notCurrPlayersTurn) return;
 
   const enemyShips = game.getPlayerShips(game.getEnemy());
-  const hit = enemyShips.find((ship) => ship.isHit(x, y));
+  const hittedShip = enemyShips.find((ship) => ship.isHit(x, y));
   let res: AttackDataRes = {
     position: { x, y },
     currentPlayer: indexPlayer,
     status: HitStatus.MISS,
   };
 
-  if (hit) {
-    const status = hit.hitStatus(x, y);
+  if (hittedShip) {
+    const status = hittedShip.hitStatus(x, y);
+
+    if (status === HitStatus.KILLED) {
+      hittedShip.posPointsHit.forEach((pos) => {
+        const isVertical = hittedShip.direction;
+        const position = {
+          x: isVertical ? x : pos,
+          y: isVertical ? pos : y,
+        };
+
+        res = {
+          position,
+          currentPlayer: indexPlayer,
+          status,
+        };
+
+        clients.sendEach(MsgType.ATTACK, res);
+      });
+      return;
+    }
+
     res = {
       position: { x, y },
       currentPlayer: indexPlayer,
