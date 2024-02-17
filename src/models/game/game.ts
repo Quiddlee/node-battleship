@@ -1,8 +1,5 @@
+import { ShipData } from './types/types';
 import { Ship } from '../ship/ship';
-
-type ShipData = {
-  [key: number]: Ship[];
-};
 
 export class Game {
   gameId: number;
@@ -15,6 +12,10 @@ export class Game {
     this.shipData[playerId2] = <Ship[]>[];
   }
 
+  public get playerIds() {
+    return Object.keys(this.shipData).map((id) => Number(id));
+  }
+
   public addShips(playerId: number, data: Ship[]) {
     this.shipData[playerId] = data;
   }
@@ -23,10 +24,6 @@ export class Game {
     const shipDataNum = Object.values(this.shipData);
     const isAllPlayersReady = shipDataNum.length === 2;
     return isAllPlayersReady;
-  }
-
-  public get playerIds() {
-    return Object.keys(this.shipData).map((id) => Number(id));
   }
 
   public getPlayerShips(id: number) {

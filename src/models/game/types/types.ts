@@ -9,3 +9,7 @@ export type StartGameDataRes = {
   ships: Ship[];
   currentPlayerIndex: number;
 };
+
+export type ShipData = {
+  [key: number]: Ship[];
+};
