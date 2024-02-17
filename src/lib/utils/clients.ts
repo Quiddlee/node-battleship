@@ -12,6 +12,10 @@ export class Clients {
     return <WS>Array.from(this.clients).find((client) => client === ws);
   }
 
+  queryById(id: number) {
+    return <WS>Array.from(this.clients).find((client) => client.id === id);
+  }
+
   sendEach<T extends MsgType>(type: T, data: MsgDataServer[T]) {
     this.clients.forEach((client) => client.send(type, data));
     return this;

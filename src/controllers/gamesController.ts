@@ -1,4 +1,5 @@
 import gamesDB from '../data/gamesDB';
+import roomsDB from '../data/roomsDB';
 import { CreateGameDataRes } from '../models/game/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
@@ -10,13 +11,27 @@ import { Cb } from '../types/types';
  * @param {Object} ws - The WebSocket connection of the user.
  * @param {number} ws.id - The id of the user.
  */
-export const createGame: Cb<MsgType.ADD_USER_ROOM> = ({ clients, ws }) => {
-  const { gameId, playerId } = gamesDB.createGame(ws.id);
+export const createGame: Cb<MsgType.ADD_USER_ROOM> = ({
+  data: { indexRoom },
+  clients,
+}) => {
+  const room = roomsDB.findRoom(indexRoom);
+  const ids = room.roomPlayerIds;
 
-  const responseData: CreateGameDataRes = {
-    idGame: gameId,
-    idPlayer: playerId,
-  };
+  if (ids.length === 1)
+    throw new Error('Cannot create game with only 1 player in the room!');
 
-  clients.sendEach(MsgType.CREATE_GAME, responseData);
+  const { gameId } = gamesDB.createGame(ids);
+  ids.forEach((id) => {
+    const responseData: CreateGameDataRes = {
+      idGame: gameId,
+      idPlayer: id,
+    };
+
+    clients.queryById(id).send(MsgType.CREATE_GAME, responseData);
+  });
+};
+
+export const addShips: Cb<MsgType.ADD_SHIPS> = ({ data }) => {
+  console.log(data);
 };
