@@ -3,6 +3,7 @@ import roomsDB from '../data/roomsDB';
 import {
   CreateGameDataRes,
   StartGameDataRes,
+  TurnDataRes,
 } from '../models/game/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
@@ -72,5 +73,28 @@ export const startGame: Cb<MsgType.ADD_SHIPS> = ({
       currentPlayerIndex: id,
     };
     clients.queryById(id).send(MsgType.START_GAME, resData);
+  });
+};
+
+/**
+ * Sends the turn data to all players in the game.
+ * @param {Object} args - The object containing the data and clients properties.
+ * @param {Object} args.data - The data sent by the client.
+ * @param {string} args.data.gameId - The ID of the game.
+ * @param {Clients} args.clients - The array with all websocket clients.
+ */
+export const sendTurn: Cb<MsgType.ADD_SHIPS> = ({
+  data: { gameId },
+  clients,
+}) => {
+  const { currentPlayerTurn, playerIds } = gamesDB.findGame(gameId);
+
+  const res: TurnDataRes = {
+    currentPlayer: currentPlayerTurn,
+  };
+
+  playerIds.forEach((id) => {
+    const client = clients.queryById(id);
+    client.send(MsgType.TURN, res);
   });
 };

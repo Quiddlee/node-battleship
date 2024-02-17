@@ -5,6 +5,7 @@ import type { Clients } from '../lib/utils/clients';
 import {
   CreateGameDataRes,
   StartGameDataRes,
+  TurnDataRes,
 } from '../models/game/types/types';
 import {
   AddUserRoomData,
@@ -50,7 +51,9 @@ export type MsgDataServer = {
             ? CreateGameDataRes
             : TMsg extends MsgType.START_GAME
               ? StartGameDataRes
-              : void;
+              : TMsg extends MsgType.TURN
+                ? TurnDataRes
+                : void;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {

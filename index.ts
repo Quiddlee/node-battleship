@@ -3,6 +3,7 @@ import 'dotenv/config';
 import {
   addShips,
   createGame,
+  sendTurn,
   startGame,
 } from './src/controllers/gamesController';
 import {
@@ -29,4 +30,4 @@ wss
   .msg(MsgType.REG, regUser, sendRooms, sendWinners)
   .msg(MsgType.CREATE_ROOM, createRoom, sendRooms)
   .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms, createGame)
-  .msg(MsgType.ADD_SHIPS, addShips, startGame);
+  .msg(MsgType.ADD_SHIPS, addShips, startGame, sendTurn);

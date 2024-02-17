@@ -7,4 +7,5 @@ export enum MsgType {
   UPDATE_ROOM = 'update_room',
   ADD_SHIPS = 'add_ships',
   START_GAME = 'start_game',
+  TURN = 'turn',
 }
