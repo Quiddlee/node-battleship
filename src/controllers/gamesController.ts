@@ -1,10 +1,12 @@
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
 import {
+  AttackDataRes,
   CreateGameDataRes,
   StartGameDataRes,
   TurnDataRes,
 } from '../models/game/types/types';
+import { HitStatus } from '../models/ship/types/enums';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
 
@@ -83,7 +85,7 @@ export const startGame: Cb<MsgType.ADD_SHIPS> = ({
  * @param {string} args.data.gameId - The ID of the game.
  * @param {Clients} args.clients - The array with all websocket clients.
  */
-export const sendTurn: Cb<MsgType.ADD_SHIPS> = ({
+export const sendTurn: Cb<MsgType.ADD_SHIPS | MsgType.ATTACK> = ({
   data: { gameId },
   clients,
 }) => {
@@ -97,4 +99,35 @@ export const sendTurn: Cb<MsgType.ADD_SHIPS> = ({
     const client = clients.queryById(id);
     client.send(MsgType.TURN, res);
   });
+};
+
+export const attack: Cb<MsgType.ATTACK> = ({
+  data: { gameId, indexPlayer, x, y },
+  clients,
+}) => {
+  const game = gamesDB.findGame(gameId);
+  const notCurrPlayersTurn = game.currentPlayerTurn !== indexPlayer;
+
+  if (notCurrPlayersTurn) return;
+
+  const enemyShips = game.getPlayerShips(game.getEnemy());
+  const hit = enemyShips.find((ship) => ship.isHit(x, y));
+  let res: AttackDataRes = {
+    position: { x, y },
+    currentPlayer: indexPlayer,
+    status: HitStatus.MISS,
+  };
+
+  if (hit) {
+    const status = hit.hitStatus(x, y);
+    res = {
+      position: { x, y },
+      currentPlayer: indexPlayer,
+      status,
+    };
+  } else {
+    game.changeTurn();
+  }
+
+  clients.sendEach(MsgType.ATTACK, res);
 };

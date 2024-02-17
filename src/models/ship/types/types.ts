@@ -10,5 +10,5 @@ export type ShipPosition = {
 export type AddShipData = {
   gameId: number;
   ships: Ship[];
-  indexPlayer: number /* id of the player in the current game session */;
+  indexPlayer: number;
 };

@@ -3,6 +3,8 @@ import type WebSocket from 'ws';
 import type { MsgType } from './enums';
 import type { Clients } from '../lib/utils/clients';
 import {
+  AttackDataRes,
+  AttackReq,
   CreateGameDataRes,
   StartGameDataRes,
   TurnDataRes,
@@ -35,7 +37,9 @@ export type MsgDataClient = {
         ? AddUserRoomData
         : TMsg extends MsgType.ADD_SHIPS
           ? AddShipData
-          : void;
+          : TMsg extends MsgType.ATTACK
+            ? AttackReq
+            : void;
 };
 
 export type MsgDataServer = {
@@ -53,7 +57,9 @@ export type MsgDataServer = {
               ? StartGameDataRes
               : TMsg extends MsgType.TURN
                 ? TurnDataRes
-                : void;
+                : TMsg extends MsgType.ATTACK
+                  ? AttackDataRes
+                  : void;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {
