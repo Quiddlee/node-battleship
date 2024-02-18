@@ -1,5 +1,6 @@
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
+import winnersDB from '../data/winnersDB';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
 import {
   CreateGameDataRes,
@@ -216,13 +217,14 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = ({
   const game = gamesDB.findGame(gameId);
   const winner = game.getWinner();
 
-  if (!winner) return;
+  if (winner === null) return;
 
   const res: FinishRes = {
     winPlayer: winner,
   };
 
   clients.sendEach(MsgType.FINISH, res);
+  winnersDB.updateWinners(winner);
 
   throw new Error('The game has been finished, all next callbacks is stoped');
 };
