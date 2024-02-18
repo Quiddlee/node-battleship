@@ -2,7 +2,7 @@ import usersDB from '../data/usersDB';
 import winnersDB from '../data/winnersDB';
 import { RegServerData, WinnersDataRes } from '../models/user/types/types';
 import { MsgType } from '../types/enums';
-import { Cb } from '../types/types';
+import { Cb, SendWinners } from '../types/types';
 
 /**
  * Registers a new user with the given name and password and sends the user data to the client.
@@ -33,13 +33,20 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
  * @param {Cb<MsgType.REG>} ws.send - A callback function that sends a message to the client.
  * @returns {void} - Returns nothing
  */
-export const sendWinners: Cb<MsgType.REG> = ({ ws }) => {
+export const sendWinners: SendWinners<
+  MsgType.REG | MsgType.ATTACK | MsgType.RANDOM_ATTACK
+> = ({ ws, clients }, each?: boolean) => {
   const { winners } = winnersDB;
 
   const winnersData: WinnersDataRes = winners.map((w) => ({
     name: w.login,
     wins: w.wins,
   }));
+
+  if (each) {
+    clients.sendEach(MsgType.UPDATE_WINNER, winnersData);
+    return;
+  }
 
   ws.send(MsgType.UPDATE_WINNER, winnersData);
 };

@@ -74,4 +74,13 @@ export type Cb<TData extends MsgType = MsgType> = (args: {
   clients: Clients;
 }) => void;
 
+export type SendWinners<TData extends MsgType = MsgType> = (
+  args: {
+    data: MsgDataClient[TData];
+    ws: WS;
+    clients: Clients;
+  },
+  each?: boolean,
+) => void;
+
 export type MsgTypesMap = Record<MsgType, Cb | Cb[]>;

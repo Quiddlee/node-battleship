@@ -1,3 +1,4 @@
+import { sendWinners } from './userControllers';
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
 import winnersDB from '../data/winnersDB';
@@ -210,10 +211,13 @@ export const randomAttack: Cb<MsgType.RANDOM_ATTACK> = (args) => {
  * @param {Clients} args.clients - The clients manager instance.
  * @throws {Error} error - The error that is thrown in order to stop next callbacks in the queue
  */
-export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = ({
-  data: { gameId },
-  clients,
-}) => {
+export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
+  args,
+) => {
+  const {
+    data: { gameId },
+    clients,
+  } = args;
   const game = gamesDB.findGame(gameId);
   const winner = game.getWinner();
 
@@ -225,6 +229,7 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = ({
 
   clients.sendEach(MsgType.FINISH, res);
   winnersDB.updateWinners(winner);
+  sendWinners(args, true);
 
   throw new Error('The game has been finished, all next callbacks is stoped');
 };
