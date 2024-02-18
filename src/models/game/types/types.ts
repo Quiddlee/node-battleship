@@ -34,3 +34,8 @@ export type AttackDataRes = {
   currentPlayer: number;
   status: HitStatus;
 };
+
+export type RandomAttackReq = {
+  gameId: number;
+  indexPlayer: number;
+};

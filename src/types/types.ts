@@ -6,6 +6,7 @@ import {
   AttackDataRes,
   AttackReq,
   CreateGameDataRes,
+  RandomAttackReq,
   StartGameDataRes,
   TurnDataRes,
 } from '../models/game/types/types';
@@ -39,7 +40,9 @@ export type MsgDataClient = {
           ? AddShipData
           : TMsg extends MsgType.ATTACK
             ? AttackReq
-            : void;
+            : TMsg extends MsgType.RANDOM_ATTACK
+              ? RandomAttackReq
+              : void;
 };
 
 export type MsgDataServer = {

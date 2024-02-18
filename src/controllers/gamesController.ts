@@ -1,5 +1,6 @@
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
+import getRandomArbitrary from '../lib/utils/getRandomInt';
 import {
   CreateGameDataRes,
   StartGameDataRes,
@@ -84,10 +85,9 @@ export const startGame: Cb<MsgType.ADD_SHIPS> = ({
  * @param {string} args.data.gameId - The ID of the game.
  * @param {Clients} args.clients - The array with all websocket clients.
  */
-export const sendTurn: Cb<MsgType.ADD_SHIPS | MsgType.ATTACK> = ({
-  data: { gameId },
-  clients,
-}) => {
+export const sendTurn: Cb<
+  MsgType.ADD_SHIPS | MsgType.ATTACK | MsgType.RANDOM_ATTACK
+> = ({ data: { gameId }, clients }) => {
   const { currentPlayerTurn, playerIds } = gamesDB.findGame(gameId);
 
   const res: TurnDataRes = {
@@ -172,5 +172,23 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     clients.sendEach(MsgType.ATTACK, res);
+  });
+};
+
+export const randomAttack: Cb<MsgType.RANDOM_ATTACK> = (args) => {
+  const {
+    data: { gameId, indexPlayer },
+  } = args;
+  const x = getRandomArbitrary(0, 9);
+  const y = getRandomArbitrary(0, 9);
+
+  attack({
+    ...args,
+    data: {
+      gameId,
+      indexPlayer,
+      x,
+      y,
+    },
   });
 };

@@ -1,5 +1,6 @@
 import { HitStatus } from './types/enums';
 import { ShipPosition, ShipType } from './types/types';
+import cell from '../../lib/utils/cell';
 
 export class Ship {
   readonly position: ShipPosition;
@@ -80,25 +81,21 @@ export class Ship {
     pointsCopy.forEach((p, i) => {
       if (isVertical) {
         if (i === 0 || i === pointsCopy.length - 1) {
-          this.cellsAround.push(this.cell(shipX, p));
+          this.cellsAround.push(cell(shipX, p));
         }
 
-        this.cellsAround.push(this.cell(shipX + 1, p));
-        this.cellsAround.push(this.cell(shipX - 1, p));
+        this.cellsAround.push(cell(shipX + 1, p));
+        this.cellsAround.push(cell(shipX - 1, p));
         return;
       }
 
       if (i === 0 || i === pointsCopy.length - 1) {
-        this.cellsAround.push(this.cell(p, shipY));
+        this.cellsAround.push(cell(p, shipY));
       }
 
-      this.cellsAround.push(this.cell(p, shipY + 1));
-      this.cellsAround.push(this.cell(p, shipY - 1));
+      this.cellsAround.push(cell(p, shipY + 1));
+      this.cellsAround.push(cell(p, shipY - 1));
     });
-  }
-
-  private cell(x: number, y: number) {
-    return { x, y };
   }
 
   private calcShipPosition() {

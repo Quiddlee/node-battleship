@@ -9,4 +9,5 @@ export enum MsgType {
   START_GAME = 'start_game',
   TURN = 'turn',
   ATTACK = 'attack',
+  RANDOM_ATTACK = 'randomAttack',
 }

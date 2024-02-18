@@ -4,6 +4,7 @@ import {
   addShips,
   attack,
   createGame,
+  randomAttack,
   sendTurn,
   startGame,
 } from './src/controllers/gamesController';
@@ -32,4 +33,5 @@ wss
   .msg(MsgType.CREATE_ROOM, createRoom, sendRooms)
   .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms, createGame)
   .msg(MsgType.ADD_SHIPS, addShips, startGame, sendTurn)
-  .msg(MsgType.ATTACK, attack, sendTurn);
+  .msg(MsgType.ATTACK, attack, sendTurn)
+  .msg(MsgType.RANDOM_ATTACK, randomAttack, sendTurn);
