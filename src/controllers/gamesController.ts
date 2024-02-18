@@ -100,6 +100,16 @@ export const sendTurn: Cb<MsgType.ADD_SHIPS | MsgType.ATTACK> = ({
   });
 };
 
+/**
+ * Sends the attack feedback to all players in the game.
+ * @param {Object} args - The object containing the data and clients properties.
+ * @param {Object} args.data - The data sent by the client.
+ * @param {string} args.data.gameId - The ID of the game.
+ * @param {number} args.data.indexPlayer - The index of the player who made the attack.
+ * @param {number} args.data.x - The x coordinate of the attack position.
+ * @param {number} args.data.y - The y coordinate of the attack position.
+ * @param {Clients} args.clients - The clients manager instance.
+ */
 export const attack: Cb<MsgType.ATTACK> = ({
   data: { gameId, indexPlayer, x, y },
   clients,
