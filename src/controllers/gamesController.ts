@@ -175,6 +175,13 @@ export const attack: Cb<MsgType.ATTACK> = ({
   });
 };
 
+/**
+ * Attacks a random position on the enemy's board and sends the attack result to all players in the game.
+ * @param {Object} args - The object containing the data and clients properties.
+ * @param {Object} args.data - The data sent by the client.
+ * @param {string} args.data.gameId - The ID of the game.
+ * @param {number} args.data.indexPlayer - The index of the player who made the attack.
+ */
 export const randomAttack: Cb<MsgType.RANDOM_ATTACK> = (args) => {
   const {
     data: { gameId, indexPlayer },
