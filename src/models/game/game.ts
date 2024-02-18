@@ -47,4 +47,36 @@ export class Game {
 
     return <number>ids.toSpliced(currIndex, 1).at(0);
   }
+
+  public isFinish() {
+    const firstPlayerShips = this.getPlayerShips(<number>this.playerIds.at(0));
+    const secondPlayerShips = this.getPlayerShips(<number>this.playerIds.at(1));
+
+    const isFirstPlayerShipsDestroyed = firstPlayerShips.every(
+      (ship) => ship.isKilled,
+    );
+    const isSecondPlayerShipsDestroyed = secondPlayerShips.every(
+      (ship) => ship.isKilled,
+    );
+
+    return isFirstPlayerShipsDestroyed || isSecondPlayerShipsDestroyed;
+  }
+
+  public getWinner() {
+    if (!this.isFinish()) return null;
+
+    const firstPlayer = <number>this.playerIds.at(0);
+    const secondPlayer = <number>this.playerIds.at(1);
+    const firstPlayerShips = this.getPlayerShips(firstPlayer);
+
+    const isFirstPlayerShipsDestroyed = firstPlayerShips.every(
+      (ship) => ship.isKilled,
+    );
+
+    if (isFirstPlayerShipsDestroyed) {
+      return secondPlayer;
+    }
+
+    return firstPlayer;
+  }
 }

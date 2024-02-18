@@ -15,7 +15,7 @@ export class Ship {
 
   public readonly posPointsHit: number[] = [];
 
-  private isKilled = false;
+  public isKilled = false;
 
   public readonly cellsAround: ShipPosition[] = [];
 

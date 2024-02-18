@@ -3,6 +3,7 @@ import roomsDB from '../data/roomsDB';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
 import {
   CreateGameDataRes,
+  FinishRes,
   StartGameDataRes,
   TurnDataRes,
 } from '../models/game/types/types';
@@ -198,4 +199,30 @@ export const randomAttack: Cb<MsgType.RANDOM_ATTACK> = (args) => {
       y,
     },
   });
+};
+
+/**
+ * Checks if the game is finished and sends the finish message to all players in the game.
+ * @param {Object} args - The object containing the data and clients properties.
+ * @param {Object} args.data - The data sent by the client.
+ * @param {string} args.data.gameId - The ID of the game.
+ * @param {Clients} args.clients - The clients manager instance.
+ * @throws {Error} error - The error that is thrown in order to stop next callbacks in the queue
+ */
+export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = ({
+  data: { gameId },
+  clients,
+}) => {
+  const game = gamesDB.findGame(gameId);
+  const winner = game.getWinner();
+
+  if (!winner) return;
+
+  const res: FinishRes = {
+    winPlayer: winner,
+  };
+
+  clients.sendEach(MsgType.FINISH, res);
+
+  throw new Error('The game has been finished, all next callbacks is stoped');
 };

@@ -10,4 +10,5 @@ export enum MsgType {
   TURN = 'turn',
   ATTACK = 'attack',
   RANDOM_ATTACK = 'randomAttack',
+  FINISH = 'finish',
 }

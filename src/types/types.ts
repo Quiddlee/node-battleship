@@ -6,6 +6,7 @@ import {
   AttackDataRes,
   AttackReq,
   CreateGameDataRes,
+  FinishRes,
   RandomAttackReq,
   StartGameDataRes,
   TurnDataRes,
@@ -62,7 +63,9 @@ export type MsgDataServer = {
                 ? TurnDataRes
                 : TMsg extends MsgType.ATTACK
                   ? AttackDataRes
-                  : void;
+                  : TMsg extends MsgType.FINISH
+                    ? FinishRes
+                    : void;
 };
 
 export type Cb<TData extends MsgType = MsgType> = (args: {

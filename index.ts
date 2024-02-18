@@ -3,6 +3,7 @@ import 'dotenv/config';
 import {
   addShips,
   attack,
+  checkFinish,
   createGame,
   randomAttack,
   sendTurn,
@@ -24,6 +25,7 @@ const WSS_PORT = Number(process.env.WSS_PORT);
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 
+// TODO: do we need to login the user and store it's leaderboard position
 // TODO: handle users exit the app - remove users from database and remove all rooms created by the user
 
 const wss = new WSS(WSS_PORT);
@@ -33,5 +35,5 @@ wss
   .msg(MsgType.CREATE_ROOM, createRoom, sendRooms)
   .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms, createGame)
   .msg(MsgType.ADD_SHIPS, addShips, startGame, sendTurn)
-  .msg(MsgType.ATTACK, attack, sendTurn)
-  .msg(MsgType.RANDOM_ATTACK, randomAttack, sendTurn);
+  .msg(MsgType.ATTACK, attack, checkFinish, sendTurn)
+  .msg(MsgType.RANDOM_ATTACK, randomAttack, checkFinish, sendTurn);

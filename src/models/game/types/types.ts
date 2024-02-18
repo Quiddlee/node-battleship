@@ -39,3 +39,7 @@ export type RandomAttackReq = {
   gameId: number;
   indexPlayer: number;
 };
+
+export type FinishRes = {
+  winPlayer: number;
+};
