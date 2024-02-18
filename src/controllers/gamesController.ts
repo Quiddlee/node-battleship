@@ -158,7 +158,17 @@ export const attack: Cb<MsgType.ATTACK> = ({
     const res = {
       position,
       currentPlayer: indexPlayer,
-      status,
+      status: HitStatus.KILLED,
+    };
+
+    clients.sendEach(MsgType.ATTACK, res);
+  });
+
+  hittedShip.cellsAround.forEach((position) => {
+    const res = {
+      position,
+      currentPlayer: indexPlayer,
+      status: HitStatus.MISS,
     };
 
     clients.sendEach(MsgType.ATTACK, res);

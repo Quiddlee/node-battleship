@@ -16,6 +16,8 @@ export class Ship {
 
   private isKilled = false;
 
+  public readonly cellsAround: ShipPosition[] = [];
+
   constructor({ type, direction, length, position }: Ship) {
     this.position = position;
     this.direction = direction;
@@ -23,6 +25,7 @@ export class Ship {
     this.type = type;
 
     this.calcShipPosition();
+    this.calcCellsAround();
   }
 
   public hitStatus(x: number, y: number) {
@@ -61,6 +64,41 @@ export class Ship {
     const isMajorHit = this.posPoints.includes(major);
 
     return isMajorHit && isMinorHit;
+  }
+
+  private calcCellsAround() {
+    const pointsCopy = [...this.posPoints];
+    const isVertical = this.direction;
+    const { x: shipX, y: shipY } = this.position;
+
+    const firstPoint = pointsCopy.at(0)! - 1;
+    const lastPoint = pointsCopy.at(-1)! + 1;
+
+    pointsCopy.unshift(firstPoint);
+    pointsCopy.push(lastPoint);
+
+    pointsCopy.forEach((p, i) => {
+      if (isVertical) {
+        if (i === 0 || i === pointsCopy.length - 1) {
+          this.cellsAround.push(this.cell(shipX, p));
+        }
+
+        this.cellsAround.push(this.cell(shipX + 1, p));
+        this.cellsAround.push(this.cell(shipX - 1, p));
+        return;
+      }
+
+      if (i === 0 || i === pointsCopy.length - 1) {
+        this.cellsAround.push(this.cell(p, shipY));
+      }
+
+      this.cellsAround.push(this.cell(p, shipY + 1));
+      this.cellsAround.push(this.cell(p, shipY - 1));
+    });
+  }
+
+  private cell(x: number, y: number) {
+    return { x, y };
   }
 
   private calcShipPosition() {
