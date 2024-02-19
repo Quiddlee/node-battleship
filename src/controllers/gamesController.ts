@@ -97,10 +97,7 @@ export const sendTurn: Cb<
     currentPlayer: currentPlayerTurn,
   };
 
-  playerIds.forEach((id) => {
-    const client = clients.queryById(id);
-    client.send(MsgType.TURN, res);
-  });
+  playerIds.forEach((id) => clients.queryById(id).send(MsgType.TURN, res));
 };
 
 /**
@@ -119,11 +116,13 @@ export const attack: Cb<MsgType.ATTACK> = ({
 }) => {
   const game = gamesDB.findGame(gameId);
   const notCurrPlayersTurn = game.currentPlayerTurn !== indexPlayer;
+  const { playerIds } = game;
 
   if (notCurrPlayersTurn) return;
 
   const enemyShips = game.getPlayerShips(game.getEnemy());
   const hittedShip = enemyShips.find((ship) => ship.isHit(x, y));
+  const players = playerIds.map((id) => clients.queryById(id));
 
   if (!hittedShip) {
     game.changeTurn();
@@ -134,7 +133,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
       status: HitStatus.MISS,
     };
 
-    clients.sendEach(MsgType.ATTACK, res);
+    players.forEach((player) => player.send(MsgType.ATTACK, res));
     return;
   }
 
@@ -147,7 +146,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
       status,
     };
 
-    clients.sendEach(MsgType.ATTACK, res);
+    players.forEach((player) => player.send(MsgType.ATTACK, res));
     return;
   }
 
@@ -164,7 +163,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
       status: HitStatus.KILLED,
     };
 
-    clients.sendEach(MsgType.ATTACK, res);
+    players.forEach((player) => player.send(MsgType.ATTACK, res));
   });
 
   hittedShip.cellsAround.forEach((position) => {
@@ -174,7 +173,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
       status: HitStatus.MISS,
     };
 
-    clients.sendEach(MsgType.ATTACK, res);
+    players.forEach((player) => player.send(MsgType.ATTACK, res));
   });
 };
 

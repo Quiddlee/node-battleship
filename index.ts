@@ -27,7 +27,6 @@ httpServer.listen(HTTP_PORT);
 
 // TODO: do we need to login the user and store it's leaderboard position
 // TODO: handle users exit the app - remove users from database and remove all rooms created by the user
-// TODO: fix to not send attack data for all clients
 const wss = new WSS(WSS_PORT);
 
 wss
