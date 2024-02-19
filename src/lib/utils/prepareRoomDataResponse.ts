@@ -10,7 +10,7 @@ import { UpdateRoomData } from '../../models/room/types/types';
 const prepareRoomDataResponse = (room: Room): UpdateRoomData => ({
   roomId: room.roomId,
   roomUsers: room.roomPlayerIds.map((id) => {
-    const { login } = db.findUser(id);
+    const { login } = db.findUserByIndex(id);
 
     return {
       name: login,

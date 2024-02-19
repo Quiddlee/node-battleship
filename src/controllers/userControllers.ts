@@ -1,3 +1,5 @@
+import { isNativeError } from 'node:util/types';
+
 import usersDB from '../data/usersDB';
 import winnersDB from '../data/winnersDB';
 import { RegServerData, WinnersDataRes } from '../models/user/types/types';
@@ -14,23 +16,46 @@ import { Cb, SendWinners } from '../types/types';
  */
 export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
   const { name, password } = data;
-  const [user, index] = usersDB.createUser(name, password);
 
-  const createdUserData: RegServerData = {
-    name: user.login,
-    index,
-    error: false,
-    errorText: '',
-  };
+  try {
+    let user;
+    let index;
 
-  ws.send(MsgType.REG, createdUserData);
-  Object.defineProperty(ws, 'id', { value: index });
+    if (usersDB.isUserAlreadyExist(name)) {
+      [user, index] = usersDB.loginUser(name, password);
+    } else {
+      [user, index] = usersDB.createUser(name, password);
+    }
+
+    const res: RegServerData = {
+      name: user.login,
+      index,
+      error: false,
+      errorText: '',
+    };
+
+    ws.send(MsgType.REG, res);
+    Object.defineProperty(ws, 'id', { value: index });
+  } catch (e) {
+    if (!isNativeError(e)) return;
+
+    const res = {
+      name,
+      index: 0,
+      error: true,
+      errorText: e.message,
+    };
+
+    ws.send(MsgType.REG, res);
+  }
 };
 
 /**
  * Sends the winners data to the client.
- * @param {Object} ws - The WebSocket connection of the client.
- * @param {Cb<MsgType.REG>} ws.send - A callback function that sends a message to the client.
+ * @param {Object} args - The arguments object.
+ * @param {Object} args.ws - The WebSocket connection of the client.
+ * @param {Clients} args.clients - The clients manager instance.
+ * @param {boolean} [each] - The boolean value which indicates should the data be sent to every player or only one.
  * @returns {void} - Returns nothing
  */
 export const sendWinners: SendWinners<

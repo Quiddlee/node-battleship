@@ -8,7 +8,7 @@ class WinnersDB {
   readonly winners: User[] = [testWinner];
 
   public updateWinners(id: number) {
-    const winner = usersDB.findUser(id);
+    const winner = usersDB.findUserByIndex(id);
     const isWinnerAlreadyExist = this.winners.includes(winner);
 
     if (isWinnerAlreadyExist) {
