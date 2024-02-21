@@ -26,7 +26,7 @@ export const sendRooms: Cb = ({ clients }) => {
  * @returns {void} - Returns nothing
  */
 export const createRoom: Cb<MsgType.CREATE_ROOM> = ({ ws, clients }) => {
-  roomsDB.createRoom(clients.query(ws).id);
+  return roomsDB.createRoom(clients.query(ws).id);
 };
 
 /**

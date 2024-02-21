@@ -1,3 +1,4 @@
+import bot from '../../models/bot/bot';
 import { MsgType } from '../../types/enums';
 import type { MsgDataServer, WS } from '../../types/types';
 
@@ -6,6 +7,7 @@ export class Clients {
 
   constructor(clients: Set<WS>) {
     this.clients = clients;
+    this.injectBotClient();
   }
 
   query(ws: WS) {
@@ -19,5 +21,9 @@ export class Clients {
   sendEach<T extends MsgType>(type: T, data: MsgDataServer[T]) {
     this.clients.forEach((client) => client.send(type, data));
     return this;
+  }
+
+  private injectBotClient() {
+    this.clients.add(bot as unknown as WS);
   }
 }

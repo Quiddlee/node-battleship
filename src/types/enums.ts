@@ -11,4 +11,6 @@ export enum MsgType {
   ATTACK = 'attack',
   RANDOM_ATTACK = 'randomAttack',
   FINISH = 'finish',
+  SINGLE_PLAY = 'single_play',
+  BOT_ATTACK = 'bot_attack',
 }

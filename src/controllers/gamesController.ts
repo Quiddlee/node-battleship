@@ -1,17 +1,116 @@
+import { addUserToRoom, createRoom } from './roomControllers';
 import { sendWinners } from './userControllers';
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
 import winnersDB from '../data/winnersDB';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
+import bot from '../models/bot/bot';
 import {
   CreateGameDataRes,
   FinishRes,
   StartGameDataRes,
   TurnDataRes,
 } from '../models/game/types/types';
+import { Room } from '../models/room/room';
+import type { AddUserRoomData } from '../models/room/types/types';
 import { HitStatus } from '../models/ship/types/enums';
+import type { AddShipData, ShipDataReq } from '../models/ship/types/types';
 import { MsgType } from '../types/enums';
-import { Cb } from '../types/types';
+import type { Cb, CbArgs, WS } from '../types/types';
+
+// TODO: change to real data
+const SHIPS_DATA: ShipDataReq[] = [
+  {
+    position: {
+      x: 7,
+      y: 0,
+    },
+    direction: true,
+    type: 'huge',
+    length: 4,
+  },
+  {
+    position: {
+      x: 1,
+      y: 4,
+    },
+    direction: false,
+    type: 'large',
+    length: 3,
+  },
+  {
+    position: {
+      x: 6,
+      y: 7,
+    },
+    direction: false,
+    type: 'large',
+    length: 3,
+  },
+  {
+    position: {
+      x: 1,
+      y: 6,
+    },
+    direction: false,
+    type: 'medium',
+    length: 2,
+  },
+  {
+    position: {
+      x: 5,
+      y: 3,
+    },
+    direction: true,
+    type: 'medium',
+    length: 2,
+  },
+  {
+    position: {
+      x: 2,
+      y: 8,
+    },
+    direction: false,
+    type: 'medium',
+    length: 2,
+  },
+  {
+    position: {
+      x: 9,
+      y: 3,
+    },
+    direction: false,
+    type: 'small',
+    length: 1,
+  },
+  {
+    position: {
+      x: 4,
+      y: 0,
+    },
+    direction: true,
+    type: 'small',
+    length: 1,
+  },
+  {
+    position: {
+      x: 7,
+      y: 5,
+    },
+    direction: true,
+    type: 'small',
+    length: 1,
+  },
+  {
+    position: {
+      x: 9,
+      y: 5,
+    },
+    direction: false,
+    type: 'small',
+    length: 1,
+  },
+];
 
 /**
  * Creates a new game with the given user as the host and sends the game data to all clients.
@@ -39,6 +138,8 @@ export const createGame: Cb<MsgType.ADD_USER_ROOM> = ({
 
     clients.queryById(id).send(MsgType.CREATE_GAME, responseData);
   });
+
+  return gameId;
 };
 
 /**
@@ -91,7 +192,10 @@ export const startGame: Cb<MsgType.ADD_SHIPS> = ({
 export const sendTurn: Cb<
   MsgType.ADD_SHIPS | MsgType.ATTACK | MsgType.RANDOM_ATTACK
 > = ({ data: { gameId }, clients }) => {
-  const { currentPlayerTurn, playerIds } = gamesDB.findGame(gameId);
+  const game = gamesDB.findGame(gameId);
+  const { currentPlayerTurn, playerIds } = game;
+
+  if (!game.isReady()) return;
 
   const res: TurnDataRes = {
     currentPlayer: currentPlayerTurn,
@@ -113,12 +217,12 @@ export const sendTurn: Cb<
 export const attack: Cb<MsgType.ATTACK> = ({
   data: { gameId, indexPlayer, x, y },
   clients,
-}) => {
+}): HitStatus => {
   const game = gamesDB.findGame(gameId);
   const notCurrPlayersTurn = game.currentPlayerTurn !== indexPlayer;
   const { playerIds } = game;
 
-  if (notCurrPlayersTurn) return;
+  if (notCurrPlayersTurn) return undefined as unknown as HitStatus;
 
   const enemyShips = game.getPlayerShips(game.getEnemy());
   const hittedShip = enemyShips.find((ship) => ship.isHit(x, y));
@@ -134,7 +238,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
-    return;
+    return HitStatus.MISS;
   }
 
   const status = hittedShip.hitStatus(x, y);
@@ -147,7 +251,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
-    return;
+    return HitStatus.SHOT;
   }
 
   hittedShip.posPointsHit.forEach((pos) => {
@@ -175,6 +279,8 @@ export const attack: Cb<MsgType.ATTACK> = ({
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
   });
+
+  return HitStatus.KILLED;
 };
 
 /**
@@ -231,4 +337,75 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
   sendWinners(args, true);
 
   throw new Error('The game has been finished, all next callbacks is stoped');
+};
+
+/**
+ * Sends a bot attack to the game server
+ * @async
+ * @param {CbArgs<MsgType.BOT_ATTACK>} args - The callback arguments for the bot attack message type
+ * @returns {Promise<void>}
+ */
+const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
+  const {
+    data: { gameId, botId },
+  } = args;
+  const { x, y } = await bot.attack();
+
+  const res = attack({
+    ...args,
+    data: { indexPlayer: botId, gameId, x, y },
+  }) as unknown as HitStatus;
+
+  sendTurn({ ...args, data: { gameId, indexPlayer: bot.id } });
+
+  if (res === HitStatus.KILLED || res === HitStatus.SHOT) {
+    await sendBotAttack(args);
+  }
+};
+
+/**
+ * Creates a single-player game with a bot opponent
+ * @param {Cb<MsgType.SINGLE_PLAY>} args - The callback arguments for the single-play message type
+ * @returns {void}
+ */
+export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
+  const room = createRoom(
+    args as unknown as CbArgs<MsgType.CREATE_ROOM>,
+  ) as unknown as Room;
+  const botRoomArgs = {
+    ...args,
+    data: {
+      indexRoom: room.roomId,
+    } as AddUserRoomData,
+    ws: bot as unknown as WS,
+  };
+
+  addUserToRoom(botRoomArgs);
+  const gameId = createGame(botRoomArgs) as unknown as number;
+  const game = gamesDB.findGame(gameId);
+  const [, botId] = game.playerIds;
+
+  const botShipArgs = {
+    ...args,
+    data: {
+      gameId,
+      ships: SHIPS_DATA,
+      indexPlayer: bot.id,
+    } as unknown as AddShipData,
+    ws: bot as unknown as WS,
+  };
+
+  addShips(botShipArgs);
+
+  const botAttackArgs = {
+    ...args,
+    data: {
+      gameId,
+      botId,
+    },
+  };
+
+  game.initBot(async () => {
+    await sendBotAttack(botAttackArgs);
+  });
 };

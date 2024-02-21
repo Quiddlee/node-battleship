@@ -2,6 +2,7 @@ import type WebSocket from 'ws';
 
 import type { MsgType } from './enums';
 import type { Clients } from '../lib/utils/clients';
+import { BotAttackReq } from '../models/bot/types/types';
 import {
   AttackDataRes,
   AttackReq,
@@ -33,16 +34,16 @@ export type WS = Omit<WebSocket, 'send'> & {
 export type MsgDataClient = {
   [TMsg in MsgType]: TMsg extends MsgType.REG
     ? RegClientData
-    : TMsg extends MsgType.CREATE_ROOM
-      ? CreateRoomMsg
-      : TMsg extends MsgType.ADD_USER_ROOM
-        ? AddUserRoomData
-        : TMsg extends MsgType.ADD_SHIPS
-          ? AddShipData
-          : TMsg extends MsgType.ATTACK
-            ? AttackReq
-            : TMsg extends MsgType.RANDOM_ATTACK
-              ? RandomAttackReq
+    : TMsg extends MsgType.ADD_USER_ROOM
+      ? AddUserRoomData
+      : TMsg extends MsgType.ADD_SHIPS
+        ? AddShipData
+        : TMsg extends MsgType.ATTACK
+          ? AttackReq
+          : TMsg extends MsgType.RANDOM_ATTACK
+            ? RandomAttackReq
+            : TMsg extends MsgType.BOT_ATTACK
+              ? BotAttackReq
               : void;
 };
 
@@ -68,11 +69,13 @@ export type MsgDataServer = {
                     : void;
 };
 
-export type Cb<TData extends MsgType = MsgType> = (args: {
+export type CbArgs<TData extends MsgType> = {
   data: MsgDataClient[TData];
   ws: WS;
   clients: Clients;
-}) => void;
+};
+
+export type Cb<TData extends MsgType = MsgType> = (args: CbArgs<TData>) => void;
 
 export type SendWinners<TData extends MsgType = MsgType> = (
   args: {
@@ -83,4 +86,4 @@ export type SendWinners<TData extends MsgType = MsgType> = (
   each?: boolean,
 ) => void;
 
-export type MsgTypesMap = Record<MsgType, Cb | Cb[]>;
+export type MsgTypesMap = Record<MsgType, Cb[]>;

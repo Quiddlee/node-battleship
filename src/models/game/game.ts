@@ -1,5 +1,10 @@
+import { EventEmitter } from 'node:stream';
+
 import { ShipData } from './types/types';
 import { Ship } from '../ship/ship';
+import { ShipDataReq } from '../ship/types/types';
+
+const CHANGE_TURN_EVENT = 'changeTurn';
 
 export class Game {
   gameId: number;
@@ -7,6 +12,8 @@ export class Game {
   shipData: ShipData = {};
 
   currentPlayerTurn;
+
+  eventEmitter = new EventEmitter();
 
   constructor(gameId: number, [playerId1, playerId2]: [number, number]) {
     this.gameId = gameId;
@@ -21,10 +28,11 @@ export class Game {
 
   public changeTurn() {
     this.currentPlayerTurn = this.getEnemy();
+    this.eventEmitter.emit(CHANGE_TURN_EVENT);
     return this;
   }
 
-  public addShips(playerId: number, data: Ship[]) {
+  public addShips(playerId: number, data: ShipDataReq[]) {
     if (this.isReady())
       throw new Error('Cannot add ships data, the game is already running!');
     this.shipData[playerId] = data.map((shipData) => new Ship(shipData));
@@ -78,5 +86,9 @@ export class Game {
     }
 
     return firstPlayer;
+  }
+
+  public initBot(cb: () => void) {
+    this.eventEmitter.on(CHANGE_TURN_EVENT, cb);
   }
 }
