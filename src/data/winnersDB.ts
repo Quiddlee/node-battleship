@@ -10,13 +10,9 @@ class WinnersDB {
   public updateWinners(id: number) {
     const winner = usersDB.findUserByIndex(id);
     const isWinnerAlreadyExist = this.winners.includes(winner);
+    winner.addWin();
 
-    if (isWinnerAlreadyExist) {
-      winner.addWin();
-      return;
-    }
-
-    this.winners.push(winner);
+    if (!isWinnerAlreadyExist) this.winners.push(winner);
   }
 }
 
