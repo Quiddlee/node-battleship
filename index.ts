@@ -9,7 +9,7 @@ import {
   sendTurn,
   singlePlay,
   startGame,
-} from './src/controllers/gamesController';
+} from './src/controllers/gameControllers';
 import {
   addUserToRoom,
   createRoom,
