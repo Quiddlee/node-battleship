@@ -1,3 +1,5 @@
+import roomsDB from '../../data/roomsDB';
+
 export class Room {
   readonly roomId: number;
 
@@ -18,5 +20,11 @@ export class Room {
       );
 
     this.roomPlayerIds.push(userIndex);
+  }
+
+  public delete() {
+    const room = roomsDB.findRoom(this.roomId);
+    roomsDB.deleteRoom(room.roomId);
+    return this;
   }
 }

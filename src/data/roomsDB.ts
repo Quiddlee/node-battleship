@@ -5,13 +5,7 @@ class RoomsDB {
 
   public createRoom(playersId: number) {
     // if user is already in the room we create delete this "old" room and create new one
-    const playerRoomIndex = this.roomList.findIndex((r) =>
-      r.roomPlayerIds.includes(playersId),
-    );
-
-    if (playerRoomIndex !== -1) {
-      this.deleteRoom(playerRoomIndex);
-    }
+    this.findRoomByUserId(playersId)?.delete();
 
     const room = new Room(this.roomList.length, playersId);
     this.roomList.push(room);
@@ -20,10 +14,15 @@ class RoomsDB {
 
   public deleteRoom(roomIndex: number) {
     this.roomList.splice(roomIndex, 1);
+    return this;
   }
 
   public filterOnePlayerRoom() {
     return this.roomList.filter((rooms) => rooms.roomPlayerIds.length === 1);
+  }
+
+  public findRoomByUserId(userId: number) {
+    return this.roomList.find((room) => room.roomId === userId);
   }
 
   public findRoom(roomIndex: number) {
