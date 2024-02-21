@@ -11,7 +11,6 @@ import {
   StartGameDataRes,
   TurnDataRes,
 } from '../models/game/types/types';
-import { Room } from '../models/room/room';
 import { AddUserRoomData } from '../models/room/types/types';
 import { HitStatus } from '../models/ship/types/enums';
 import { MsgType } from '../types/enums';
@@ -281,9 +280,7 @@ export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
   const bot = botsDB.createBot();
   args.clients.add(bot);
 
-  const room = createRoom(
-    args as unknown as CbArgs<MsgType.CREATE_ROOM>,
-  ) as unknown as Room;
+  const room = createRoom(args as unknown as CbArgs<MsgType.CREATE_ROOM>);
 
   room.addUser(bot.id);
 

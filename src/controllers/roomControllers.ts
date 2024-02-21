@@ -1,5 +1,6 @@
 import roomsDB from '../data/roomsDB';
 import prepareRoomDataResponse from '../lib/utils/prepareRoomDataResponse';
+import { Room } from '../models/room/room';
 import { UpdateRoomDataRes } from '../models/room/types/types';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
@@ -22,10 +23,10 @@ export const sendRooms: Cb = ({ clients }) => {
  * Creates a new room with the given client as the host.
  * @param {Object} ws - The WebSocket connection of the client.
  * @param {Object} clients - An object containing the clients data.
- * @param {Cb<MsgType.CREATE_ROOM>} clients.query - A callback function that returns the client data by WebSocket connection.
+ * @param {Cb<MsgType.CREATE_ROOM, Room>} clients.query - A callback function that returns the client data by WebSocket connection.
  * @returns {void} - Returns nothing
  */
-export const createRoom: Cb<MsgType.CREATE_ROOM> = ({ ws, clients }) => {
+export const createRoom: Cb<MsgType.CREATE_ROOM, Room> = ({ ws, clients }) => {
   return roomsDB.createRoom(clients.query(ws).id);
 };
 
