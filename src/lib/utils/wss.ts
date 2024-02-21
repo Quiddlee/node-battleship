@@ -1,5 +1,4 @@
-import { isNativeError } from 'node:util/types';
-
+/* eslint-disable no-console */
 import WebSocket, { WebSocketServer } from 'ws';
 
 import { Clients } from './clients';
@@ -22,10 +21,8 @@ export class WSS {
     this.wss.on('connection', this.handleWssConnect.bind(this));
   }
 
-  public msg<T extends MsgType = MsgType>(msgType: T, cb: Cb<T>): this;
-  public msg<T extends MsgType = MsgType>(msgType: T, ...cbs: Cb<T>[]): this;
   public msg<T extends MsgType = MsgType>(msgType: T, ...cbs: Cb<T>[]) {
-    this.msgTypesMap[msgType] = <Cb | Cb[]>cbs;
+    this.msgTypesMap[msgType] = <Cb[]>cbs;
     return this;
   }
 
@@ -41,26 +38,13 @@ export class WSS {
         this.wss.clients as unknown as Set<WS>,
       );
 
-      try {
-        if (Array.isArray(msgController)) {
-          msgController.forEach((controller) => {
-            controller?.({
-              data: userData,
-              ws: extendedWs,
-              clients,
-            });
-          });
-          return;
-        }
-
-        msgController?.({
+      msgController.forEach((controller) => {
+        controller?.({
           data: userData,
           ws: extendedWs,
           clients,
         });
-      } catch (e) {
-        if (isNativeError(e)) console.log(e.message);
-      }
+      });
     });
   }
 
