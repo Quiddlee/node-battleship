@@ -332,7 +332,10 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
     winPlayer: winner,
   };
 
-  clients.sendEach(MsgType.FINISH, res);
+  game.playerIds.forEach((id) =>
+    clients.queryById(id).send(MsgType.FINISH, res),
+  );
+
   winnersDB.updateWinners(winner);
   sendWinners(args, true);
 
