@@ -281,6 +281,7 @@ export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
   args.clients.add(bot);
 
   const room = createRoom(args as unknown as CbArgs<MsgType.CREATE_ROOM>);
+  if (!room) return;
 
   room.addUser(bot.id);
 
