@@ -1,10 +1,10 @@
-import { addUserToRoom, createRoom } from './roomControllers';
+import { createRoom } from './roomControllers';
 import { sendWinners } from './userControllers';
+import botsDB from '../data/botsDB';
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
 import winnersDB from '../data/winnersDB';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
-import bot from '../models/bot/bot';
 import {
   CreateGameDataRes,
   FinishRes,
@@ -12,105 +12,10 @@ import {
   TurnDataRes,
 } from '../models/game/types/types';
 import { Room } from '../models/room/room';
-import type { AddUserRoomData } from '../models/room/types/types';
+import { AddUserRoomData } from '../models/room/types/types';
 import { HitStatus } from '../models/ship/types/enums';
-import type { AddShipData, ShipDataReq } from '../models/ship/types/types';
 import { MsgType } from '../types/enums';
 import type { Cb, CbArgs, WS } from '../types/types';
-
-// TODO: change to real data
-const SHIPS_DATA: ShipDataReq[] = [
-  {
-    position: {
-      x: 7,
-      y: 0,
-    },
-    direction: true,
-    type: 'huge',
-    length: 4,
-  },
-  {
-    position: {
-      x: 1,
-      y: 4,
-    },
-    direction: false,
-    type: 'large',
-    length: 3,
-  },
-  {
-    position: {
-      x: 6,
-      y: 7,
-    },
-    direction: false,
-    type: 'large',
-    length: 3,
-  },
-  {
-    position: {
-      x: 1,
-      y: 6,
-    },
-    direction: false,
-    type: 'medium',
-    length: 2,
-  },
-  {
-    position: {
-      x: 5,
-      y: 3,
-    },
-    direction: true,
-    type: 'medium',
-    length: 2,
-  },
-  {
-    position: {
-      x: 2,
-      y: 8,
-    },
-    direction: false,
-    type: 'medium',
-    length: 2,
-  },
-  {
-    position: {
-      x: 9,
-      y: 3,
-    },
-    direction: false,
-    type: 'small',
-    length: 1,
-  },
-  {
-    position: {
-      x: 4,
-      y: 0,
-    },
-    direction: true,
-    type: 'small',
-    length: 1,
-  },
-  {
-    position: {
-      x: 7,
-      y: 5,
-    },
-    direction: true,
-    type: 'small',
-    length: 1,
-  },
-  {
-    position: {
-      x: 9,
-      y: 5,
-    },
-    direction: false,
-    type: 'small',
-    length: 1,
-  },
-];
 
 /**
  * Creates a new game with the given user as the host and sends the game data to all clients.
@@ -352,6 +257,7 @@ const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
   const {
     data: { gameId, botId },
   } = args;
+  const bot = botsDB.findBotByIndex(botId);
   const { x, y } = await bot.attack();
 
   const res = attack({
@@ -372,9 +278,15 @@ const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
  * @returns {void}
  */
 export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
+  const bot = botsDB.createBot();
+  args.clients.add(bot);
+
   const room = createRoom(
     args as unknown as CbArgs<MsgType.CREATE_ROOM>,
   ) as unknown as Room;
+
+  room.addUser(bot.id);
+
   const botRoomArgs = {
     ...args,
     data: {
@@ -383,22 +295,12 @@ export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
     ws: bot as unknown as WS,
   };
 
-  addUserToRoom(botRoomArgs);
   const gameId = createGame(botRoomArgs) as unknown as number;
   const game = gamesDB.findGame(gameId);
   const [, botId] = game.playerIds;
 
-  const botShipArgs = {
-    ...args,
-    data: {
-      gameId,
-      ships: SHIPS_DATA,
-      indexPlayer: bot.id,
-    } as unknown as AddShipData,
-    ws: bot as unknown as WS,
-  };
-
-  addShips(botShipArgs);
+  const ships = bot.generateShips();
+  game.addShips(bot.id, ships);
 
   const botAttackArgs = {
     ...args,

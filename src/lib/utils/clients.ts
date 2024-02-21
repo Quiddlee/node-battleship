@@ -1,4 +1,4 @@
-import bot from '../../models/bot/bot';
+import { Bot } from '../../models/bot/bot';
 import { MsgType } from '../../types/enums';
 import type { MsgDataServer, WS } from '../../types/types';
 
@@ -7,7 +7,6 @@ export class Clients {
 
   constructor(clients: Set<WS>) {
     this.clients = clients;
-    this.injectBotClient();
   }
 
   query(ws: WS) {
@@ -23,7 +22,7 @@ export class Clients {
     return this;
   }
 
-  private injectBotClient() {
-    this.clients.add(bot as unknown as WS);
+  add(client: WS | Bot) {
+    this.clients.add(client as WS);
   }
 }
