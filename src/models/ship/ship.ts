@@ -1,5 +1,5 @@
 import { HitStatus } from './types/enums';
-import { ShipPosition, ShipType } from './types/types';
+import { ShipDataReq, ShipLength, ShipPosition, ShipType } from './types/types';
 import cell from '../../lib/utils/cell';
 
 export class Ship {
@@ -7,7 +7,7 @@ export class Ship {
 
   readonly direction: boolean;
 
-  readonly length: number;
+  readonly length: ShipLength;
 
   readonly type: ShipType;
 
@@ -19,7 +19,7 @@ export class Ship {
 
   public readonly cellsAround: ShipPosition[] = [];
 
-  constructor({ type, direction, length, position }: Ship) {
+  constructor({ type, direction, length, position }: ShipDataReq) {
     this.position = position;
     this.direction = direction;
     this.length = length;
