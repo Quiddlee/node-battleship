@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { isNativeError } from 'node:util/types';
+
 import WebSocket, { WebSocketServer } from 'ws';
 
 import { Clients } from './clients';
@@ -38,13 +40,18 @@ export class WSS {
         this.wss.clients as unknown as Set<WS>,
       );
 
-      msgController.forEach((controller) => {
-        controller?.({
-          data: userData,
-          ws: extendedWs,
-          clients,
+      try {
+        msgController.forEach((controller) => {
+          controller?.({
+            data: userData,
+            ws: extendedWs,
+            clients,
+          });
         });
-      });
+      } catch (e) {
+        if (!isNativeError(e)) return;
+        console.log(e.message);
+      }
     });
   }
 
