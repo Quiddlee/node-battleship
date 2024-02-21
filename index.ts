@@ -28,7 +28,6 @@ httpServer.listen(HTTP_PORT);
 
 // FIXME: winners update score
 // TODO: prevent user to create more than 1 room
-// TODO: change to create new bot instance on new game
 // TODO: handle users exit the app - remove users from database and remove all rooms created by the user
 const wss = new WSS(WSS_PORT);
 
