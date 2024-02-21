@@ -24,7 +24,7 @@ import type { Cb, CbArgs, WS } from '../types/types';
  * @param {Object} ws - The WebSocket connection of the user.
  * @param {number} ws.id - The id of the user.
  */
-export const createGame: Cb<MsgType.ADD_USER_ROOM> = ({
+export const createGame: Cb<MsgType.ADD_USER_ROOM, number> = ({
   data: { indexRoom },
   clients,
 }) => {
@@ -295,7 +295,7 @@ export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
     ws: bot as unknown as WS,
   };
 
-  const gameId = createGame(botRoomArgs) as unknown as number;
+  const gameId = createGame(botRoomArgs);
   const game = gamesDB.findGame(gameId);
   const [, botId] = game.playerIds;
 
