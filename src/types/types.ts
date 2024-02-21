@@ -75,7 +75,9 @@ export type CbArgs<TData extends MsgType> = {
   clients: Clients;
 };
 
-export type Cb<TData extends MsgType = MsgType> = (args: CbArgs<TData>) => void;
+export type Cb<TData extends MsgType = MsgType, TReturn = void> = (
+  args: CbArgs<TData>,
+) => TReturn;
 
 export type SendWinners<TData extends MsgType = MsgType> = (
   args: {
