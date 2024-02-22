@@ -1,5 +1,6 @@
+import cell from '../../lib/utils/cell';
 import getRandomArbitrary from '../../lib/utils/getRandomInt';
-import { ShipDataReq } from '../ship/types/types';
+import { ShipDataReq, ShipPosition } from '../ship/types/types';
 
 // TODO: change to real data
 const SHIPS_DATA: ShipDataReq[] = [
@@ -96,11 +97,11 @@ const SHIPS_DATA: ShipDataReq[] = [
 ];
 
 export class Bot {
-  #id = -10;
+  readonly #id = -10;
 
   private readonly minDelay = 1;
 
-  private readonly maxDelay = 2.5;
+  private readonly maxDelay = 2;
 
   get id() {
     return this.#id;
@@ -108,7 +109,7 @@ export class Bot {
 
   public send() {}
 
-  public attack(): Promise<{ x: number; y: number }> {
+  public attack(): Promise<ShipPosition> {
     return new Promise((resolve) => {
       this.imitateHumanTiming(() => resolve(this.calcAttack()));
     });
@@ -118,11 +119,8 @@ export class Bot {
     return SHIPS_DATA;
   }
 
-  private calcAttack() {
-    const x = getRandomArbitrary(0, 9);
-    const y = getRandomArbitrary(0, 9);
-
-    return { x, y };
+  private calcAttack(): ShipPosition {
+    return cell(getRandomArbitrary(0, 9), getRandomArbitrary(0, 9));
   }
 
   private imitateHumanTiming(cb: () => void) {
