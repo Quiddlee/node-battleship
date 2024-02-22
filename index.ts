@@ -17,18 +17,18 @@ import {
 } from './src/controllers/roomControllers';
 import { regUser, sendWinners } from './src/controllers/userControllers';
 import { httpServer } from './src/http_server';
-import { WSS } from './src/lib/utils/wss';
+import { WSS } from './src/lib/utils';
 import { MsgType } from './src/types/enums';
 
 const HTTP_PORT = Number(process.env.HTTP_PORT);
 const WSS_PORT = Number(process.env.WSS_PORT);
 
+// TODO: delete rooms after game is ended
+// TODO: Send that the player already in the account if it tries to login in anoter tab
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 
-const wss = new WSS(WSS_PORT);
-
-wss
+new WSS(WSS_PORT)
   .msg(MsgType.REG, regUser, sendRooms, sendWinners)
   .msg(MsgType.CREATE_ROOM, createRoom, sendRooms)
   .msg(MsgType.ADD_USER_ROOM, addUserToRoom, sendRooms, createGame)

@@ -1,7 +1,6 @@
-import roomsDB from '../data/roomsDB';
-import prepareRoomDataResponse from '../lib/utils/prepareRoomDataResponse';
-import { Room } from '../models/room/room';
-import { UpdateRoomDataRes } from '../models/room/types/types';
+import { roomsDB } from '../data';
+import { prepareRoomDataResponse } from '../lib/utils';
+import { Room, UpdateRoomDataRes } from '../models/room';
 import { MsgType } from '../types/enums';
 import { Cb } from '../types/types';
 

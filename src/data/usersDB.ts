@@ -1,4 +1,4 @@
-import { User } from '../models/user/user';
+import { User } from '../models/user';
 
 class UsersDB {
   private readonly users: User[] = [];

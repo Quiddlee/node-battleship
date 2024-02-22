@@ -1,8 +1,8 @@
-import type WebSocket from 'ws';
+import WebSocket from 'ws';
 
-import type { MsgType } from './enums';
-import type { Clients } from '../lib/utils/clients';
-import { BotAttackReq } from '../models/bot/types/types';
+import { MsgType } from './enums';
+import { Clients } from '../lib/utils';
+import { BotAttackReq } from '../models/bot';
 import {
   AttackDataRes,
   AttackReq,
@@ -11,18 +11,14 @@ import {
   RandomAttackReq,
   StartGameDataRes,
   TurnDataRes,
-} from '../models/game/types/types';
+} from '../models/game';
 import {
   AddUserRoomData,
   CreateRoomMsg,
   UpdateRoomDataRes,
-} from '../models/room/types/types';
-import { AddShipData } from '../models/ship/types/types';
-import type {
-  RegClientData,
-  RegServerData,
-  WinnersDataRes,
-} from '../models/user/types/types';
+} from '../models/room';
+import { AddShipData } from '../models/ship';
+import { RegClientData, RegServerData, WinnersDataRes } from '../models/user';
 
 export type SendFn = <T extends MsgType>(type: T, data: MsgDataServer[T]) => WS;
 

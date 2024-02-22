@@ -1,6 +1,5 @@
-import db from '../../data/usersDB';
-import { Room } from '../../models/room/room';
-import { UpdateRoomData } from '../../models/room/types/types';
+import { usersDB } from '../../data';
+import { Room, UpdateRoomData } from '../../models/room';
 
 /**
  * Prepares the room data response object from a room db
@@ -10,7 +9,7 @@ import { UpdateRoomData } from '../../models/room/types/types';
 const prepareRoomDataResponse = (room: Room): UpdateRoomData => ({
   roomId: room.roomId,
   roomUsers: room.roomPlayerIds.map((id) => {
-    const { login } = db.findUserByIndex(id);
+    const { login } = usersDB.findUserByIndex(id);
 
     return {
       name: login,

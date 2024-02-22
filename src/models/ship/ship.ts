@@ -1,6 +1,6 @@
-import { HitStatus } from './types/enums';
-import { ShipDataReq, ShipLength, ShipPosition, ShipType } from './types/types';
-import cell from '../../lib/utils/cell';
+import { cell } from '../../lib/utils';
+
+import { HitStatus, ShipDataReq, ShipLength, ShipPosition, ShipType } from '.';
 
 export class Ship {
   readonly position: ShipPosition;

@@ -1,4 +1,5 @@
-import { Room } from '../models/room/room';
+// eslint-disable-next-line import/no-cycle
+import { Room } from '../models/room';
 
 class RoomsDB {
   private readonly roomList: Room[] = [];

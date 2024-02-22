@@ -1,10 +1,9 @@
-import { EventEmitter } from 'node:stream';
+import { EventEmitter } from 'ws';
 
-import { HittedCells, ShipData } from './types/types';
-import { Ship } from '../ship/ship';
-import { ShipDataReq, ShipPosition } from '../ship/types/types';
+import { CHANGE_TURN_EVENT } from './lib/const/const';
+import { Ship, ShipDataReq, ShipPosition } from '../ship';
 
-const CHANGE_TURN_EVENT = 'changeTurn';
+import type { HittedCells, ShipData } from '.';
 
 export class Game {
   gameId: number;

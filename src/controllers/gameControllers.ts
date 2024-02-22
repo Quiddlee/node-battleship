@@ -1,21 +1,17 @@
 import { createRoom } from './roomControllers';
 import { sendWinners } from './userControllers';
-import botsDB from '../data/botsDB';
-import gamesDB from '../data/gamesDB';
-import roomsDB from '../data/roomsDB';
-import winnersDB from '../data/winnersDB';
-import cell from '../lib/utils/cell';
-import getRandomArbitrary from '../lib/utils/getRandomInt';
+import { botsDB, gamesDB, roomsDB, winnersDB } from '../data';
+import { cell, getRandomArbitrary } from '../lib/utils';
 import {
   CreateGameDataRes,
   FinishRes,
   StartGameDataRes,
   TurnDataRes,
-} from '../models/game/types/types';
-import { AddUserRoomData } from '../models/room/types/types';
-import { HitStatus } from '../models/ship/types/enums';
+} from '../models/game';
+import { AddUserRoomData } from '../models/room';
+import { HitStatus } from '../models/ship';
 import { MsgType } from '../types/enums';
-import type { Cb, CbArgs, WS } from '../types/types';
+import { Cb, CbArgs, WS } from '../types/types';
 
 /**
  * Creates a new game with the given user as the host and sends the game data to all clients.
