@@ -1,8 +1,13 @@
 import { Ship } from '../../ship/ship';
 import { HitStatus } from '../../ship/types/enums';
+import { ShipPosition } from '../../ship/types/types';
 
 export type ShipData = {
   [key: number]: Ship[];
+};
+
+export type HittedCells = {
+  [key: number]: ShipPosition[];
 };
 
 export type CreateGameDataRes = {
