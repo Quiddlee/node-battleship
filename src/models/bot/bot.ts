@@ -1,100 +1,7 @@
+import { SHIPS_DATA } from '../../lib/const/const';
 import cell from '../../lib/utils/cell';
 import getRandomArbitrary from '../../lib/utils/getRandomInt';
 import { ShipDataReq, ShipPosition } from '../ship/types/types';
-
-// TODO: change to real data
-const SHIPS_DATA: ShipDataReq[] = [
-  {
-    position: {
-      x: 7,
-      y: 0,
-    },
-    direction: true,
-    type: 'huge',
-    length: 4,
-  },
-  {
-    position: {
-      x: 1,
-      y: 4,
-    },
-    direction: false,
-    type: 'large',
-    length: 3,
-  },
-  {
-    position: {
-      x: 6,
-      y: 7,
-    },
-    direction: false,
-    type: 'large',
-    length: 3,
-  },
-  {
-    position: {
-      x: 1,
-      y: 6,
-    },
-    direction: false,
-    type: 'medium',
-    length: 2,
-  },
-  {
-    position: {
-      x: 5,
-      y: 3,
-    },
-    direction: true,
-    type: 'medium',
-    length: 2,
-  },
-  {
-    position: {
-      x: 2,
-      y: 8,
-    },
-    direction: false,
-    type: 'medium',
-    length: 2,
-  },
-  {
-    position: {
-      x: 9,
-      y: 3,
-    },
-    direction: false,
-    type: 'small',
-    length: 1,
-  },
-  {
-    position: {
-      x: 4,
-      y: 0,
-    },
-    direction: true,
-    type: 'small',
-    length: 1,
-  },
-  {
-    position: {
-      x: 7,
-      y: 5,
-    },
-    direction: true,
-    type: 'small',
-    length: 1,
-  },
-  {
-    position: {
-      x: 9,
-      y: 5,
-    },
-    direction: false,
-    type: 'small',
-    length: 1,
-  },
-];
 
 export class Bot {
   readonly #id = -10;
@@ -115,8 +22,8 @@ export class Bot {
     });
   }
 
-  public generateShips() {
-    return SHIPS_DATA;
+  public generateShips(): ShipDataReq[] {
+    return SHIPS_DATA.at(getRandomArbitrary(0, SHIPS_DATA.length))!;
   }
 
   private calcAttack(): ShipPosition {
