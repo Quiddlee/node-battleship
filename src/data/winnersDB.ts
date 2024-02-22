@@ -1,11 +1,8 @@
 import usersDB from './usersDB';
 import { User } from '../models/user/user';
 
-const testWinner = new User('Bohdan', '1');
-testWinner.addWin();
-
 class WinnersDB {
-  readonly winners: User[] = [testWinner];
+  readonly winners: User[] = [];
 
   public updateWinners(id: number) {
     const winner = usersDB.findUserByIndex(id);
