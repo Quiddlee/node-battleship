@@ -23,7 +23,9 @@ class RoomsDB {
   }
 
   public findRoomByUserId(userId: number) {
-    return this.roomList.find((room) => room.roomId === userId);
+    return this.roomList.find((room) =>
+      room.roomPlayerIds.some((id) => id === userId),
+    );
   }
 
   public findRoom(roomIndex: number) {
