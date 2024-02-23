@@ -243,11 +243,14 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
   );
 
   winnersDB.updateWinners(winner);
-  sendWinners(args, true);
   gamesDB.deleteGame(gameId);
+  sendWinners(args, true);
 
-  const botId = game.playerIds.find((id) => id < 0);
-  if (botId) botsDB.deleteBotById(botId);
+  const botId = game.findBotId();
+  if (botId) {
+    clients.delete(botId);
+    botsDB.deleteBotById(botId);
+  }
 
   throw new Error('The game has been finished, all next callbacks is stoped');
 };

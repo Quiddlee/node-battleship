@@ -25,6 +25,10 @@ export class Game {
     return Object.keys(this.shipData).map((id) => Number(id));
   }
 
+  public findBotId() {
+    return this.playerIds.find((id) => id < 0);
+  }
+
   public changeTurn() {
     this.currentPlayerTurn = this.getEnemy();
     this.eventEmitter.emit(CHANGE_TURN_EVENT);
