@@ -1,11 +1,11 @@
+import { Clients } from './clients';
 import { sendWinners } from '../../controllers/userControllers';
-import { gamesDB, winnersDB } from '../../data';
-import { FinishRes } from '../../models/game';
-import { RegClientData } from '../../models/user';
+import gamesDB from '../../data/gamesDB';
+import winnersDB from '../../data/winnersDB';
+import { FinishRes } from '../../models/game/types/types';
+import { RegClientData } from '../../models/user/types/types';
 import { MsgType } from '../../types/enums';
 import { WS } from '../../types/types';
-
-import { Clients } from '.';
 
 const win = (gameId: number, clients: Clients) => {
   const game = gamesDB.findGame(gameId);

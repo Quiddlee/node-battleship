@@ -8,7 +8,12 @@
   },
   "scripts": {
     "start": "node index.ts",
-    "start:dev": "nodemon"
+    "start:dev": "nodemon",
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --fix --ext ts",
+    "format": "prettier \"./**/*.{ts,css}\"",
+    "format:fix": "prettier --write \"./**/*.{ts,css}\"",
+    "type-check": "tsc --noEmit"
   },
   "author": "Andrei Auchynnikau, Bohdan Shcherbyna",
   "keywords": [

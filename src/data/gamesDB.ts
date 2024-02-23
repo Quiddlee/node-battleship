@@ -1,4 +1,4 @@
-import { Game } from '../models/game';
+import { Game } from '../models/game/game';
 
 class GamesDB {
   private readonly gameList: Game[] = [];

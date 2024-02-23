@@ -1,5 +1,6 @@
-import { usersDB } from '../../data';
-import { Room, UpdateRoomData } from '../../models/room';
+import usersDB from '../../data/usersDB';
+import { Room } from '../../models/room/room';
+import { UpdateRoomData } from '../../models/room/types/types';
 
 /**
  * Prepares the room data response object from a room db

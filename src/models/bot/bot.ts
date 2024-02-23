@@ -1,6 +1,7 @@
 import { SHIPS_DATA } from '../../lib/const/const';
-import { cell, getRandomArbitrary } from '../../lib/utils';
-import { ShipDataReq, ShipPosition } from '../ship';
+import cell from '../../lib/utils/cell';
+import getRandomArbitrary from '../../lib/utils/getRandomInt';
+import { ShipDataReq, ShipPosition } from '../ship/types/types';
 
 export class Bot {
   readonly #id = -10;

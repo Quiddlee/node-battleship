@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { roomsDB } from '../../data';
+import roomsDB from '../../data/roomsDB';
 
 export class Room {
   readonly roomId: number;

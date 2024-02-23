@@ -17,7 +17,7 @@ import {
 } from './src/controllers/roomControllers';
 import { regUser, sendWinners } from './src/controllers/userControllers';
 import { httpServer } from './src/http_server';
-import { WSS } from './src/lib/utils';
+import { WSS } from './src/lib/utils/wss';
 import { MsgType } from './src/types/enums';
 
 const HTTP_PORT = Number(process.env.HTTP_PORT);

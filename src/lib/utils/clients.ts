@@ -1,5 +1,5 @@
-import { Bot } from '../../models/bot/bot';
-import { MsgType } from '../../types/enums';
+import type { Bot } from '../../models/bot/bot';
+import type { MsgType } from '../../types/enums';
 import type { MsgDataServer, WS } from '../../types/types';
 
 export class Clients {

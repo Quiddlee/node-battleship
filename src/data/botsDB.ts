@@ -1,4 +1,4 @@
-import { Bot } from '../models/bot';
+import { Bot } from '../models/bot/bot';
 
 class BotsDB {
   private botList: Bot[] = [];

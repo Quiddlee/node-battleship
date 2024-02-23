@@ -1,5 +1,5 @@
 import usersDB from './usersDB';
-import { User } from '../models/user';
+import { User } from '../models/user/user';
 
 class WinnersDB {
   readonly winners: User[] = [];

@@ -1,7 +1,8 @@
-import { isNativeError } from 'node:util/types';
+import { isNativeError } from 'util/types';
 
-import { usersDB, winnersDB } from '../data';
-import { RegServerData, WinnersDataRes } from '../models/user';
+import usersDB from '../data/usersDB';
+import winnersDB from '../data/winnersDB';
+import { RegServerData, WinnersDataRes } from '../models/user/types/types';
 import { MsgType } from '../types/enums';
 import { Cb, SendWinners } from '../types/types';
 

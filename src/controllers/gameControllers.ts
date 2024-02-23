@@ -10,9 +10,9 @@ import {
   FinishRes,
   StartGameDataRes,
   TurnDataRes,
-} from '../models/game';
-import { AddUserRoomData } from '../models/room';
-import { HitStatus } from '../models/ship';
+} from '../models/game/types/types';
+import { AddUserRoomData } from '../models/room/types/types';
+import { HitStatus } from '../models/ship/types/enums';
 import { MsgType } from '../types/enums';
 import { Cb, CbArgs, WS } from '../types/types';
 

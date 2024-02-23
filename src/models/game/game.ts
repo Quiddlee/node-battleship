@@ -1,10 +1,9 @@
 import { EventEmitter } from 'ws';
 
+import { CHANGE_TURN_EVENT } from './lib/const/const';
 import { ShipData } from './types/types';
 import { Ship } from '../ship/ship';
 import { ShipDataReq } from '../ship/types/types';
-
-import type { HittedCells, ShipData } from '.';
 
 export class Game {
   gameId: number;

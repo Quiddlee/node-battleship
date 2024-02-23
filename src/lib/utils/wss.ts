@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-import { isNativeError } from 'node:util/types';
+
+import { isNativeError } from 'util/types';
 
 import WebSocket, { WebSocketServer } from 'ws';
 
 import { Clients } from './clients';
-import type { MsgType } from '../../types/enums';
-import type { Msg } from '../../types/interface';
+import { MsgType } from '../../types/enums';
+import { Msg } from '../../types/interface';
 import { Cb, MsgDataServer, MsgTypesMap, WS } from '../../types/types';
 
 export class WSS {
