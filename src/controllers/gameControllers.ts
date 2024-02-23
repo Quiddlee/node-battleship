@@ -4,6 +4,7 @@ import botsDB from '../data/botsDB';
 import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
 import winnersDB from '../data/winnersDB';
+import cell from '../lib/utils/cell';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
 import { Game } from '../models/game/game';
 import {
@@ -127,13 +128,16 @@ export const attack: Cb<MsgType.ATTACK> = ({
   const game = gamesDB.findGame(gameId);
   const notCurrPlayersTurn = game.currentPlayerTurn !== indexPlayer;
   const { playerIds } = game;
+  const isAlreadyHittedCell = game.isAlreadyHitted(indexPlayer, cell(x, y));
 
   if (notCurrPlayersTurn) return undefined as unknown as HitStatus;
 
   const enemyShips = game.getPlayerShips(game.getEnemy());
   const hittedShip = enemyShips.find((ship) => ship.isHit(x, y));
   const players = playerIds.map((id) => clients.queryById(id));
+  game.saveHittedCell(indexPlayer, cell(x, y));
 
+  if (hittedShip && isAlreadyHittedCell) game.changeTurn();
   if (!hittedShip) {
     game.changeTurn();
 
