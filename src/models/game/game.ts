@@ -1,7 +1,8 @@
 import { EventEmitter } from 'ws';
 
-import { CHANGE_TURN_EVENT } from './lib/const/const';
-import { Ship, ShipDataReq, ShipPosition } from '../ship';
+import { ShipData } from './types/types';
+import { Ship } from '../ship/ship';
+import { ShipDataReq } from '../ship/types/types';
 
 import type { HittedCells, ShipData } from '.';
 
@@ -9,8 +10,6 @@ export class Game {
   gameId: number;
 
   shipData: ShipData = {};
-
-  hittedCells: HittedCells = {};
 
   currentPlayerTurn;
 
@@ -20,24 +19,11 @@ export class Game {
     this.gameId = gameId;
     this.shipData[playerId1] = null as unknown as Ship[];
     this.shipData[playerId2] = null as unknown as Ship[];
-    this.hittedCells[playerId1] = [];
-    this.hittedCells[playerId2] = [];
     this.currentPlayerTurn = playerId1;
   }
 
   public get playerIds() {
     return Object.keys(this.shipData).map((id) => Number(id));
-  }
-
-  public isAlreadyHitted(playerId: number, cell: ShipPosition): boolean {
-    const playersHittedCells = this.hittedCells[playerId];
-    return playersHittedCells.some(
-      (hittedCell) => hittedCell.x === cell.x && hittedCell.y === cell.y,
-    );
-  }
-
-  public saveHittedCell(playerId: number, cell: ShipPosition) {
-    this.hittedCells[playerId].push(cell);
   }
 
   public changeTurn() {
