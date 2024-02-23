@@ -23,7 +23,7 @@ import { MsgType } from './src/types/enums';
 const HTTP_PORT = Number(process.env.HTTP_PORT);
 const WSS_PORT = Number(process.env.WSS_PORT);
 
-// TODO: Send that the player already in the account if it tries to login in anoter tab
+// TODO: After each received command program should display the command and result
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 

@@ -16,8 +16,7 @@ export class WSS {
 
   constructor(port: number) {
     this.wss = new WebSocketServer({ port });
-    // TODO: uncommnet line below when app is finished
-    // console.log('Websocket parameters: ', this.wss.options);
+    console.log('Websocket parameters: ', this.wss.options);
 
     this.wss.on('error', console.error);
     process.on('exit', () => this.wss.close());
