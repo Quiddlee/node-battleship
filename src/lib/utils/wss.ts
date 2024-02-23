@@ -14,9 +14,11 @@ export class WSS {
 
   private readonly wss: WebSocketServer;
 
-  constructor(port: number) {
-    this.wss = new WebSocketServer({ port });
-    console.log('Websocket parameters: ', this.wss.options);
+  constructor(port: number, host: string) {
+    this.wss = new WebSocketServer({ port, host });
+    console.log(
+      `Websocket address: ${this.wss.options.host}\nWebsocket port: ${this.wss.options.port}`,
+    );
 
     this.wss.on('error', console.error);
     process.on('exit', () => this.wss.close());
