@@ -35,7 +35,6 @@ export const createGame: Cb<
     throw new Error('Cannot create game with only 1 player in the room!');
 
   const { gameId, game } = gamesDB.createGame(ids);
-  roomsDB.deleteRoom(indexRoom);
   ids.forEach((id) => {
     const responseData: CreateGameDataRes = {
       idGame: gameId,
@@ -45,6 +44,7 @@ export const createGame: Cb<
     clients.queryById(id).send(MsgType.CREATE_GAME, responseData);
   });
 
+  roomsDB.deleteRoom(indexRoom);
   return { gameId, game };
 };
 
@@ -286,11 +286,8 @@ const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
  * @returns {void}
  */
 export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
-  const { clients, ws } = args;
   const bot = botsDB.createBot();
-
-  roomsDB.findRoomByUserId(ws.id)?.delete();
-  clients.add(bot);
+  args.clients.add(bot);
 
   const room = createRoom(args as unknown as CbArgs<MsgType.CREATE_ROOM>);
   if (!room) return;

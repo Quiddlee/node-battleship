@@ -3,18 +3,18 @@ import type { MsgType } from '../../types/enums';
 import type { MsgDataServer, WS } from '../../types/types';
 
 export class Clients {
-  private readonly clients: WS[];
+  private readonly clients: Set<WS>;
 
   constructor(clients: Set<WS>) {
-    this.clients = Array.from(clients);
+    this.clients = clients;
   }
 
   query(ws: WS) {
-    return <WS>this.clients.find((client) => client === ws);
+    return <WS>Array.from(this.clients).find((client) => client === ws);
   }
 
   queryById(id: number) {
-    return <WS>this.clients.find((client) => client.id === id);
+    return <WS>Array.from(this.clients).find((client) => client.id === id);
   }
 
   sendEach<T extends MsgType>(type: T, data: MsgDataServer[T]) {
@@ -23,11 +23,13 @@ export class Clients {
   }
 
   add(client: WS | Bot) {
-    this.clients.push(client as WS);
+    this.clients.add(client as WS);
+    return this;
   }
 
   delete(id: number) {
-    const index = this.clients.findIndex((cl) => cl.id === id);
-    this.clients.splice(index, 1);
+    const bot = Array.from(this.clients).find((cl) => cl.id === id);
+    if (bot) this.clients.delete(bot);
+    return this;
   }
 }
