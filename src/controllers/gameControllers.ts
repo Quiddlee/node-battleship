@@ -283,8 +283,11 @@ const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
  * @returns {void}
  */
 export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
+  const { clients, ws } = args;
   const bot = botsDB.createBot();
-  args.clients.add(bot);
+
+  roomsDB.findRoomByUserId(ws.id)?.delete();
+  clients.add(bot);
 
   const room = createRoom(args as unknown as CbArgs<MsgType.CREATE_ROOM>);
   if (!room) return;

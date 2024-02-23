@@ -23,8 +23,8 @@ import { MsgType } from './src/types/enums';
 const HTTP_PORT = Number(process.env.HTTP_PORT);
 const WSS_PORT = Number(process.env.WSS_PORT);
 
-// TODO: delete rooms after game is ended
 // TODO: Send that the player already in the account if it tries to login in anoter tab
+// TODO: delete room if it already exists on enter room
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 
@@ -35,4 +35,4 @@ new WSS(WSS_PORT)
   .msg(MsgType.ADD_SHIPS, addShips, startGame, sendTurn)
   .msg(MsgType.ATTACK, attack, checkFinish, sendTurn)
   .msg(MsgType.RANDOM_ATTACK, randomAttack, checkFinish, sendTurn)
-  .msg(MsgType.SINGLE_PLAY, singlePlay);
+  .msg(MsgType.SINGLE_PLAY, singlePlay, sendRooms);

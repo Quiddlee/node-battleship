@@ -43,4 +43,5 @@ export const addUserToRoom: Cb<MsgType.ADD_USER_ROOM> = ({
   ws,
 }) => {
   roomsDB.addUserRoom(indexRoom, ws.id);
+  roomsDB.findRoomByUserId(ws.id)?.delete();
 };
