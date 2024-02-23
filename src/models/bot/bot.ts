@@ -4,11 +4,15 @@ import getRandomArbitrary from '../../lib/utils/getRandomInt';
 import { ShipDataReq, ShipPosition } from '../ship/types/types';
 
 export class Bot {
-  readonly #id = -10;
+  readonly #id;
 
   private readonly minDelay = 1;
 
-  private readonly maxDelay = 2;
+  private readonly maxDelay = 1.7;
+
+  constructor(id: number) {
+    this.#id = id;
+  }
 
   get id() {
     return this.#id;

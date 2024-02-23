@@ -7,11 +7,16 @@ class GamesDB {
     const gameId = this.gameList.length;
     const game = new Game(gameId, playerIds);
     this.gameList.push(game);
-    return game;
+    return { game, gameId };
   }
 
   public findGame(index: number) {
     return this.gameList[index];
+  }
+
+  public deleteGame(index: number) {
+    this.gameList.splice(index, 1);
+    return this;
   }
 }
 

@@ -5,6 +5,7 @@ import gamesDB from '../data/gamesDB';
 import roomsDB from '../data/roomsDB';
 import winnersDB from '../data/winnersDB';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
+import { Game } from '../models/game/game';
 import {
   CreateGameDataRes,
   FinishRes,
@@ -23,17 +24,17 @@ import { Cb, CbArgs, WS } from '../types/types';
  * @param {Object} ws - The WebSocket connection of the user.
  * @param {number} ws.id - The id of the user.
  */
-export const createGame: Cb<MsgType.ADD_USER_ROOM, number> = ({
-  data: { indexRoom },
-  clients,
-}) => {
+export const createGame: Cb<
+  MsgType.ADD_USER_ROOM,
+  { gameId: number; game: Game }
+> = ({ data: { indexRoom }, clients }) => {
   const room = roomsDB.findRoom(indexRoom);
   const ids = room.roomPlayerIds;
 
   if (ids.length === 1)
     throw new Error('Cannot create game with only 1 player in the room!');
 
-  const { gameId } = gamesDB.createGame(ids);
+  const { gameId, game } = gamesDB.createGame(ids);
   ids.forEach((id) => {
     const responseData: CreateGameDataRes = {
       idGame: gameId,
@@ -43,7 +44,7 @@ export const createGame: Cb<MsgType.ADD_USER_ROOM, number> = ({
     clients.queryById(id).send(MsgType.CREATE_GAME, responseData);
   });
 
-  return gameId;
+  return { gameId, game };
 };
 
 /**
@@ -242,6 +243,10 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
 
   winnersDB.updateWinners(winner);
   sendWinners(args, true);
+  gamesDB.deleteGame(gameId);
+
+  const botId = game.playerIds.find((id) => id < 0);
+  if (botId) botsDB.deleteBotById(botId);
 
   throw new Error('The game has been finished, all next callbacks is stoped');
 };
@@ -256,7 +261,7 @@ const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
   const {
     data: { gameId, botId },
   } = args;
-  const bot = botsDB.findBotByIndex(botId);
+  const bot = botsDB.findBotById(botId);
   const { x, y } = await bot.attack();
 
   const res = attack({
@@ -293,10 +298,7 @@ export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
     ws: bot as unknown as WS,
   };
 
-  const gameId = createGame(botRoomArgs);
-  const game = gamesDB.findGame(gameId);
-  const [, botId] = game.playerIds;
-
+  const { gameId, game } = createGame(botRoomArgs);
   const ships = bot.generateShips();
   game.addShips(bot.id, ships);
 
@@ -304,7 +306,7 @@ export const singlePlay: Cb<MsgType.SINGLE_PLAY> = (args) => {
     ...args,
     data: {
       gameId,
-      botId,
+      botId: bot.id,
     },
   };
 
