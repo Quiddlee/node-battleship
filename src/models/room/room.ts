@@ -12,7 +12,6 @@ export class Room {
   }
 
   public addUser(userIndex: number) {
-    // TODO: decide what to do if the user already in the room
     const isUserAlreadyInTheRoom = this.roomPlayerIds.includes(userIndex);
 
     if (isUserAlreadyInTheRoom)
