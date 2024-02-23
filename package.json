@@ -7,7 +7,7 @@
     "node": "20.0.0"
   },
   "scripts": {
-    "start": "node index.ts",
+    "start": "tsx index.ts",
     "start:dev": "nodemon",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix --ext ts",
