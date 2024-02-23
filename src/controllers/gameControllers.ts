@@ -35,6 +35,7 @@ export const createGame: Cb<
     throw new Error('Cannot create game with only 1 player in the room!');
 
   const { gameId, game } = gamesDB.createGame(ids);
+  roomsDB.deleteRoom(indexRoom);
   ids.forEach((id) => {
     const responseData: CreateGameDataRes = {
       idGame: gameId,
