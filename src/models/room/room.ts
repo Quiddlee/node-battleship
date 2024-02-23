@@ -23,8 +23,7 @@ export class Room {
   }
 
   public delete() {
-    const room = roomsDB.findRoom(this.roomId);
-    roomsDB.deleteRoom(room.roomId);
+    roomsDB.deleteRoom(this.roomId);
     return this;
   }
 }
