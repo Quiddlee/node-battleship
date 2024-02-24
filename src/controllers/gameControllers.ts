@@ -266,7 +266,7 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
   }
 
   logResult(res);
-  throw new Error('The game has been finished, all next callbacks is stoped');
+  throw new Error('The game has been finished');
 };
 
 /**
