@@ -43,6 +43,11 @@ export const addUserToRoom: Cb<MsgType.ADD_USER_ROOM> = ({
   data: { indexRoom },
   ws,
 }) => {
-  roomsDB.findRoomByUserId(ws.id)?.delete();
+  const roomToJoin = roomsDB.findRoomByUserId(ws.id);
+
+  // if user trying to join room that he created do nothing
+  if (roomToJoin?.roomId === indexRoom) return;
+
+  roomToJoin?.delete();
   roomsDB.addUserRoom(indexRoom, ws.id);
 };
