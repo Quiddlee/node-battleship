@@ -17,6 +17,10 @@ class UsersDB {
     return this.users[index];
   }
 
+  public findUserByLogin(login: string) {
+    return this.users.find((usr) => usr.login === login);
+  }
+
   public loginUser(login: string, password: string): [User, number] {
     const user = this.users.find((usr) => usr.login === login);
     const index = this.users.findIndex((usr) => usr.login === login);

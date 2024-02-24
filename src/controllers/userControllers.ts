@@ -19,11 +19,15 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
   const { name, password } = data;
 
   try {
-    let user;
+    let user = usersDB.findUserByLogin(name);
     let index;
+
+    if (user && user.isOnline)
+      throw new Error('The user you trying to login is already logged in!');
 
     if (usersDB.isUserAlreadyExist(name)) {
       [user, index] = usersDB.loginUser(name, password);
+      user.online();
     } else {
       [user, index] = usersDB.createUser(name, password);
     }

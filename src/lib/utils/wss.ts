@@ -5,6 +5,7 @@ import { isNativeError } from 'util/types';
 import WebSocket, { WebSocketServer } from 'ws';
 
 import { Clients } from './clients';
+import usersDB from '../../data/usersDB';
 import { MsgType } from '../../types/enums';
 import { Msg } from '../../types/interface';
 import { Cb, MsgDataServer, MsgTypesMap, WS } from '../../types/types';
@@ -38,6 +39,10 @@ export class WSS {
     console.log('A user connected');
     const extendedWs = this.extendWebSocket(ws);
 
+    extendedWs.on('close', () =>
+      this.handleConnectionClose.call(this, extendedWs),
+    );
+
     extendedWs.on('message', (data) => {
       const userMsg = <Msg>JSON.parse(data.toString());
       const userData = this.extractData(userMsg);
@@ -58,6 +63,10 @@ export class WSS {
         console.log(e.message);
       }
     });
+  }
+
+  private handleConnectionClose(ws: WS) {
+    usersDB.findUserByIndex(ws.id).offline();
   }
 
   private extendClients(clients: Set<WS>) {
