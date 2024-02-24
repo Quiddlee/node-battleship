@@ -14,6 +14,8 @@ export class WSS {
 
   private readonly wss: WebSocketServer;
 
+  private readonly clients: Clients;
+
   constructor(port: number, host: string) {
     this.wss = new WebSocketServer({ port, host });
     console.log(
@@ -23,6 +25,8 @@ export class WSS {
     this.wss.on('error', console.error);
     process.on('exit', () => this.wss.close());
     this.wss.on('connection', this.handleWssConnect.bind(this));
+
+    this.clients = this.extendClients(this.wss.clients as unknown as Set<WS>);
   }
 
   public msg<T extends MsgType = MsgType>(msgType: T, ...cbs: Cb<T>[]) {
@@ -38,16 +42,13 @@ export class WSS {
       const userMsg = <Msg>JSON.parse(data.toString());
       const userData = this.extractData(userMsg);
       const msgController = this.msgTypesMap[userMsg.type];
-      const clients = this.extendClients(
-        this.wss.clients as unknown as Set<WS>,
-      );
 
       try {
         msgController.forEach((controller) => {
           controller?.({
             data: userData,
             ws: extendedWs,
-            clients,
+            clients: this.clients,
           });
         });
       } catch (e) {
