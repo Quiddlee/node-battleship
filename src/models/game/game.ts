@@ -16,6 +16,8 @@ export class Game {
 
   eventEmitter = new EventEmitter();
 
+  private isSingle: boolean = false;
+
   constructor(gameId: number, [playerId1, playerId2]: [number, number]) {
     this.gameId = gameId;
     this.shipData[playerId1] = null as unknown as Ship[];
@@ -46,7 +48,10 @@ export class Game {
 
   public changeTurn() {
     this.currentPlayerTurn = this.getEnemy();
-    this.eventEmitter.emit(CHANGE_TURN_EVENT);
+
+    if (this.isSingle && !this.isFinish())
+      this.eventEmitter.emit(CHANGE_TURN_EVENT);
+
     return this;
   }
 
@@ -108,5 +113,6 @@ export class Game {
 
   public initBot(cb: () => void) {
     this.eventEmitter.on(CHANGE_TURN_EVENT, cb);
+    this.isSingle = true;
   }
 }
