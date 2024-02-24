@@ -1,4 +1,5 @@
 import roomsDB from '../data/roomsDB';
+import logResult from '../lib/utils/logResult';
 import prepareRoomDataResponse from '../lib/utils/prepareRoomDataResponse';
 import { Room } from '../models/room/room';
 import { UpdateRoomDataRes } from '../models/room/types/types';
@@ -42,6 +43,6 @@ export const addUserToRoom: Cb<MsgType.ADD_USER_ROOM> = ({
   data: { indexRoom },
   ws,
 }) => {
-  roomsDB.addUserRoom(indexRoom, ws.id);
   roomsDB.findRoomByUserId(ws.id)?.delete();
+  roomsDB.addUserRoom(indexRoom, ws.id);
 };
