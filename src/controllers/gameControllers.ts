@@ -6,6 +6,7 @@ import roomsDB from '../data/roomsDB';
 import winnersDB from '../data/winnersDB';
 import cell from '../lib/utils/cell';
 import getRandomArbitrary from '../lib/utils/getRandomInt';
+import logResult from '../lib/utils/logResult';
 import { Game } from '../models/game/game';
 import {
   CreateGameDataRes,
@@ -32,8 +33,8 @@ export const createGame: Cb<
   const room = roomsDB.findRoom(indexRoom);
   const ids = room.roomPlayerIds;
 
-  if (ids.length === 1)
-    throw new Error('Cannot create game with only 1 player in the room!');
+  // If there is only 1 user in the room do nothing
+  if (ids.length === 1) throw new Error('');
 
   const { gameId, game } = gamesDB.createGame(ids);
   ids.forEach((id) => {
@@ -43,6 +44,7 @@ export const createGame: Cb<
     };
 
     clients.queryById(id).send(MsgType.CREATE_GAME, responseData);
+    logResult(responseData);
   });
 
   roomsDB.deleteRoom(indexRoom);
@@ -86,6 +88,7 @@ export const startGame: Cb<MsgType.ADD_SHIPS> = ({
       currentPlayerIndex: id,
     };
     clients.queryById(id).send(MsgType.START_GAME, resData);
+    logResult(resData);
   });
 };
 
@@ -109,6 +112,8 @@ export const sendTurn: Cb<
   };
 
   playerIds.forEach((id) => clients.queryById(id).send(MsgType.TURN, res));
+
+  logResult(res);
 };
 
 /**
@@ -148,6 +153,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
+    logResult(res);
     return HitStatus.MISS;
   }
 
@@ -161,6 +167,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
+    logResult(res);
     return HitStatus.SHOT;
   }
 
@@ -178,6 +185,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
+    logResult(res);
   });
 
   hittedShip.cellsAround.forEach((position) => {
@@ -188,6 +196,7 @@ export const attack: Cb<MsgType.ATTACK> = ({
     };
 
     players.forEach((player) => player.send(MsgType.ATTACK, res));
+    logResult(res);
   });
 
   return HitStatus.KILLED;
@@ -256,6 +265,7 @@ export const checkFinish: Cb<MsgType.ATTACK | MsgType.RANDOM_ATTACK> = (
     botsDB.deleteBotById(botId);
   }
 
+  logResult(res);
   throw new Error('The game has been finished, all next callbacks is stoped');
 };
 
@@ -282,6 +292,8 @@ const sendBotAttack = async (args: CbArgs<MsgType.BOT_ATTACK>) => {
   if (res === HitStatus.KILLED || res === HitStatus.SHOT) {
     await sendBotAttack(args);
   }
+
+  logResult(res);
 };
 
 /**

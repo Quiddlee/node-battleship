@@ -2,6 +2,7 @@ import { isNativeError } from 'util/types';
 
 import usersDB from '../data/usersDB';
 import winnersDB from '../data/winnersDB';
+import logResult from '../lib/utils/logResult';
 import { RegServerData, WinnersDataRes } from '../models/user/types/types';
 import { MsgType } from '../types/enums';
 import { Cb, SendWinners } from '../types/types';
@@ -36,6 +37,7 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
 
     ws.send(MsgType.REG, res);
     Object.defineProperty(ws, 'id', { value: index });
+    logResult(res);
   } catch (e) {
     if (!isNativeError(e)) return;
 
@@ -47,6 +49,7 @@ export const regUser: Cb<MsgType.REG> = ({ data, ws }) => {
     };
 
     ws.send(MsgType.REG, res);
+    logResult(res);
   }
 };
 
@@ -74,4 +77,5 @@ export const sendWinners: SendWinners<
   }
 
   ws.send(MsgType.UPDATE_WINNER, winnersData);
+  logResult(winnersData);
 };

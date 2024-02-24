@@ -44,6 +44,8 @@ export class WSS {
       const msgController = this.msgTypesMap[userMsg.type];
 
       try {
+        console.log(`Command: ${userMsg.type}`);
+
         msgController.forEach((controller) => {
           controller?.({
             data: userData,

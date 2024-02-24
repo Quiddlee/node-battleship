@@ -18,6 +18,7 @@ export const sendRooms: Cb = ({ clients }) => {
     .map(prepareRoomDataResponse);
 
   clients.sendEach(MsgType.UPDATE_ROOM, openRooms);
+  logResult(openRooms);
 };
 
 /**
