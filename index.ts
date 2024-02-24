@@ -24,7 +24,6 @@ const HTTP_PORT = Number(process.env.HTTP_PORT);
 const WSS_PORT = Number(process.env.WSS_PORT);
 const WSS_HOST = process.env.HOST;
 
-// TODO: After each received command program should display the command and result
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 
