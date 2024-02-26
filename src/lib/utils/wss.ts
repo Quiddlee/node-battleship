@@ -66,7 +66,7 @@ export class WSS {
   }
 
   private handleConnectionClose(ws: WS) {
-    usersDB.findUserByIndex(ws.id).offline();
+    usersDB.findUserByIndex(ws.id)?.offline();
   }
 
   private extendClients(clients: Set<WS>) {
