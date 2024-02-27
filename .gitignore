@@ -128,3 +128,17 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# System Files
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
+
+# Links
+*.lnk
+.idea/
+*.PEM
+.vscode/
+
+# Logs
+npm-debug.log
